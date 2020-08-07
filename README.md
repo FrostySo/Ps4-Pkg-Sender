@@ -8,6 +8,10 @@ It can send:
   - Games
   - Patches
   - DLC's
+  
+  [Download](https://mega.nz/file/DFcERIDD#Bpt9-blVSlzhpFGWsXguOPwhf6chq63Zh_OEg4g2j60)
+  
+  Feedback is apperciated. You can make an issue about any problems you have or if it works well (so I know).
 
 ## Requirements
 - [.Net Framework 4.6](https://www.microsoft.com/en-nz/download/details.aspx?id=48130)
