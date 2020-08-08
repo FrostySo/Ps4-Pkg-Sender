@@ -1,3 +1,4 @@
+
 # Ps4 Package Sender
 
 ![The Tool](https://frostyso.github.io/imgs/pkgsender.png)
@@ -20,7 +21,7 @@ It can send:
 
 Once Node JS is installed, open up cmd and paste this command in 
 
-`npm install http-server` 
+`npm install http-server -g` 
 
 ## How to Use
 The order of which you import the pkg files does not matter. The program will automatically install in this order 
@@ -53,3 +54,8 @@ Context Menu Options
 
 ### Known problems
 Installing themes is bugged for multi-part themes. This is a problem with the package installer itself, not the package sender
+
+### Credits
+[xXxTheDarkprogramerxXx](https://github.com/xXxTheDarkprogramerxXx) for the [PS4 Tools](https://github.com/xXxTheDarkprogramerxXx/PS4_Tools) library
+
+[flatz](https://github.com/flatz/) for the [ps4_remote_pkg_installer](https://github.com/flatz/ps4_remote_pkg_installer) api
