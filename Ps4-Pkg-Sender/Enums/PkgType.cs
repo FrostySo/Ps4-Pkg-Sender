@@ -3,7 +3,7 @@
 namespace Ps4_Pkg_Sender.Enums {
 
     public enum PkgType {
-        Unkown,
+        Unknown,
         Game = 6,
         Additional_Content = 7,
         Patch = 8,
@@ -21,7 +21,7 @@ namespace Ps4_Pkg_Sender.Enums {
                 case "Addon_Theme":
                 return PkgType.Addon_Theme;
                 default:
-                return PkgType.Unkown;
+                return PkgType.Unknown;
             }
         }
 
@@ -37,7 +37,7 @@ namespace Ps4_Pkg_Sender.Enums {
                 case PKG.SceneRelated.PKGType.App:
                 return PkgType.Game;
                 default:
-                return PkgType.Unkown;
+                return PkgType.Unknown;
             }
         }
     }
