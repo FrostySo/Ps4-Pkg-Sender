@@ -21,6 +21,7 @@ namespace Ps4_Pkg_Sender.Ps4 {
             {PkgType.Patch,1},
             {PkgType.Additional_Content,2},
             {PkgType.Addon_Theme,3},
+            {PkgType.Unknown,4 }
         };
 
         public int CompareTo(PkgInfo other) {
