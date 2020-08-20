@@ -78,13 +78,11 @@ namespace Ps4_Pkg_Sender {
                     NodeJsProcessSet.Add(proc.Id);
                 }
 
-                ServerPort = 0;
-
                 Logger.WriteLine("::StartServer - Starting server in directory " + Path.GetDirectoryName(info.FilePath),Logger.Type.StandardOutput);
                 var cmdProcess = new Process();
                 var path = Path.GetDirectoryName(info.FilePath);
                 cmdProcess.StartInfo.FileName = "cmd.exe";
-                cmdProcess.StartInfo.Arguments = $"/C http-server \"{path}\" ";
+                cmdProcess.StartInfo.Arguments = $"/C http-server \"{path}\" -p {GetNextBestPort()}";
                 cmdProcess.StartInfo.UseShellExecute = false;
                 cmdProcess.StartInfo.CreateNoWindow = true;
                 cmdProcess.StartInfo.RedirectStandardOutput = true;
@@ -118,10 +116,6 @@ namespace Ps4_Pkg_Sender {
                     while (stdout != null) {
                         stdout = temp.StandardOutput.ReadLine();
                         if (stdout != null) {
-                            var match = Regex.Match(stdout, @"\[32m(\d+)\S");
-                            if (match.Success) {
-                                server.ServerPort = int.Parse(match.Groups[1].Value);
-                            }
                             Logger.WriteLine(stdout, Logger.Type.StandardOutput);
                         }
                     }
@@ -143,12 +137,6 @@ namespace Ps4_Pkg_Sender {
                         Logger.WriteLine(stderr, Logger.Type.StandardOutput);
                     }
                 });
-
-                //Wait For Port to be set
-                while (IsRunning && ServerPort == 0) {
-                    System.Threading.Thread.Sleep(100);
-                }
-
                 IsRunning = true;
             }
 
@@ -633,13 +621,15 @@ namespace Ps4_Pkg_Sender {
             var pkgFilePaths = GetFilesForFileExtension(".pkg", paths, true);
             List<PkgInfo> pkgList = new List<PkgInfo>();
             List<PkgInfo> patchesList = new List<PkgInfo>();
-            List<string> badFileNamesList = new List<string>();
-            foreach (var pkgFilePath in pkgFilePaths) {
+            foreach (var filePath in pkgFilePaths) {
+                var pkgFilePath = filePath;
                 var fileName = Path.GetFileName(pkgFilePath);
                 if(fileName.Contains(" ")) {
-                    badFileNamesList.Add(fileName);
-                    continue;
+                    fileName = fileName.Replace(" ", ".");
+                    pkgFilePath = pkgFilePath.Substring(0,pkgFilePath.Length-fileName.Length) + fileName;
+                    File.Move(filePath, pkgFilePath);
                 }
+
                 try {
                     var pkg = PS4_Tools.PKG.SceneRelated.Read_PKG(pkgFilePath);
                     PkgInfo pkgInfo = new PkgInfo();
@@ -687,11 +677,6 @@ namespace Ps4_Pkg_Sender {
             //To the UI
             ps4PkgList.Sort();
             ResizeListViewColumns(this.listViewItemsQueue, listViewHwnd);
-            if (badFileNamesList.Count > 0) {
-                String badNames = "";
-                badFileNamesList.ForEach(name => badNames += name + "\n");
-                MessageBox.Show($"{badNames}Have been skipped. Files must not contain a whitespace",$"Skipped {badFileNamesList.Count} files");
-            }
         }
         
 
