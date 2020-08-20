@@ -176,6 +176,9 @@ namespace Ps4_Pkg_Sender {
                 if (response.Contains("task_id")) {
                     return int.Parse(JToken.Parse(response)["task_id"].ToString());
                 }
+                if (response.Contains("error_code")) {
+                    throw new RPIErrorThrownException(long.Parse(JToken.Parse(response)["error_code"].ToString()));
+                }
                 return -1;
             }
 
@@ -223,7 +226,7 @@ namespace Ps4_Pkg_Sender {
                     return true;
                 }
                 if (response.Contains("{ \"status\": \"fail\"")) {
-                    id = long.Parse(JToken.Parse(response)["error_code"].ToString());
+                    throw new RPIErrorThrownException(long.Parse(JToken.Parse(response)["error_code"].ToString()));
                 }
                 return false;
             }
@@ -734,10 +737,6 @@ namespace Ps4_Pkg_Sender {
                                     if (taskId == 0xAFFFFFF) { //no task id provided but already installed
                                         finished = true;
                                     }
-                                } else {
-                                    if (taskId == 0x80990004) {
-                                        throw new SkipItemException(Enums.TaskType.Failed, "Could not install for unkown reason. Error: 0x80990004");
-                                    }
                                 }
                             }
                             break;
@@ -791,6 +790,16 @@ namespace Ps4_Pkg_Sender {
                     ps4PkgQueue.Dequeue();
                     server.StopServer();
                     taskId = 0;
+                }catch(RPIErrorThrownException ex) {
+                    switch (ex.ErrorCode) {
+                        case 0x80990019: //SCE_BGFT_ERROR_TASK_NOENT
+                        finished = true;
+                        taskId = -1;
+                        break;
+                    
+                    default:
+                        throw new SkipItemException(Enums.TaskType.Failed, $"Could not install. Error: {ex.ErrorCode} ({ex.Message})");
+                    }
                 }
                 System.Threading.Thread.Sleep(500);
             }

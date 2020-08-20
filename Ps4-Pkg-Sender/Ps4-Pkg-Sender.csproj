@@ -84,6 +84,7 @@
     <Compile Include="Controls\Sorting\ListViewColumnSorter.cs" />
     <Compile Include="Enums\PkgType.cs" />
     <Compile Include="Enums\TaskType.cs" />
+    <Compile Include="Exceptions\RPIErrorThrownException.cs" />
     <Compile Include="Exceptions\SkipItemException.cs" />
     <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="Extensions\IntegerExtenstions.cs" />
