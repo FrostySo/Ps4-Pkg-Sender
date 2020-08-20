@@ -818,6 +818,7 @@ namespace Ps4_Pkg_Sender {
                         server.StopServer();
                         ps4PkgQueue.Dequeue();
                         finished = false;
+                        skipInstallCheck = false;
                         firstInitiate = true;
                         System.Threading.Thread.Sleep(1000); //Sleep some seconds so we don't piss the server off
                     }
@@ -828,6 +829,7 @@ namespace Ps4_Pkg_Sender {
                     ps4PkgQueue.Dequeue();
                     server.StopServer();
                     taskId = 0;
+                    skipInstallCheck = false;
                 }
                 System.Threading.Thread.Sleep(500);
             }
