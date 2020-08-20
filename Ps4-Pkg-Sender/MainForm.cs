@@ -46,7 +46,7 @@ namespace Ps4_Pkg_Sender {
 
             public string PS4IP { get; set; }
             public string ServerIp { get; set; }
-            public int ServerPort { get; set; }
+            public static int ServerPort { get; set; } = 8080;
 
             public bool IsRunning { get; internal set; }
 
@@ -210,9 +210,9 @@ namespace Ps4_Pkg_Sender {
                 return response.Contains("\"exists\": \"true\""); 
             }
 
-            public bool InitiateInstall(PkgInfo pkgInfo, out long id) {
+            public bool InitiateInstall(PkgInfo pkgInfo, bool skipInstallCheck, out long id) {
                 id = 0;
-                if (TryRecoverTaskID(pkgInfo, out id)) {
+                if (!skipInstallCheck && TryRecoverTaskID(pkgInfo, out id)) {
                     if (id == -1) { //App is already installed and no id was returned
                         id = 0xAFFFFFF; //The flag we will use to determine if it is installed
                     }
@@ -692,6 +692,7 @@ namespace Ps4_Pkg_Sender {
             bool finished = false;
             bool forceStopped = false;
             bool firstInitiate = true;
+            bool skipInstallCheck = false;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             while (ps4PkgQueue.Count > 0) {
@@ -733,11 +734,48 @@ namespace Ps4_Pkg_Sender {
 
                             case Enums.TaskType.Sending:
                             if (taskId == 0) {
-                                if (server.InitiateInstall(queueItem.PkgInfo, out taskId)) {
-                                    if (taskId == 0xAFFFFFF) { //no task id provided but already installed
-                                        finished = true;
+                                try {
+                                    if (server.InitiateInstall(queueItem.PkgInfo, skipInstallCheck,out taskId)) {
+                                        if (taskId == 0xAFFFFFF) { //no task id provided but already installed
+                                            finished = true;
+                                        }
+                                    }
+                                } catch (RPIErrorThrownException ex) {
+                                    bool doDefault = false;
+                                    switch (ex.ErrorCode) {
+                                        case 0x80990019: //SCE_BGFT_ERROR_TASK_NOENT
+
+                                        //The API is so fked up that it returns random shit
+                                        //This here will handle this weird use case
+                                        //Most apps should install with this here.
+                                        if (!skipInstallCheck) {
+                                            taskId = 0;
+                                            skipInstallCheck = true;
+                                        } else {
+                                            finished = true;
+                                            taskId = -1;
+                                        }
+                                        break;
+
+                                        case 0x80020016: //SCE_KERNEL_ERROR_EINVAL
+                                        if (skipInstallCheck) {
+                                            doDefault = true;
+                                        } else {
+                                            taskId = 0;
+                                            skipInstallCheck = true;
+                                        }
+                                        break;
+
+                                        default:
+                                        doDefault = true;
+                                        break;
+                                    }
+
+                                    if (doDefault) {
+                                        throw new SkipItemException(Enums.TaskType.Failed, $"Could not install. Error: 0x{ex.ErrorCode.ToString("X")} ({ex.Message})");
                                     }
                                 }
+                          
                             }
                             break;
                         }
@@ -790,16 +828,6 @@ namespace Ps4_Pkg_Sender {
                     ps4PkgQueue.Dequeue();
                     server.StopServer();
                     taskId = 0;
-                }catch(RPIErrorThrownException ex) {
-                    switch (ex.ErrorCode) {
-                        case 0x80990019: //SCE_BGFT_ERROR_TASK_NOENT
-                        finished = true;
-                        taskId = -1;
-                        break;
-                    
-                    default:
-                        throw new SkipItemException(Enums.TaskType.Failed, $"Could not install. Error: {ex.ErrorCode} ({ex.Message})");
-                    }
                 }
                 System.Threading.Thread.Sleep(500);
             }
