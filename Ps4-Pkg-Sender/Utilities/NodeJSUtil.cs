@@ -4,6 +4,10 @@ using System.Linq;
 namespace Ps4_Pkg_Sender.Utilities {
     public static class NodeJSUtil {
 
+        public static Process[] GetNodeProcesses() {
+            return Process.GetProcessesByName("Node");
+        }
+
         public static bool IsNodeJsInstalled() {
             return ExecuteCMD("npm", "Usage: npm <command>");
         }
@@ -17,7 +21,7 @@ namespace Ps4_Pkg_Sender.Utilities {
         }
 
         public static void KillAllNodeJSInstances() {
-            Process.GetProcessesByName("Node").ToList().ForEach(p => {
+            GetNodeProcesses().ToList().ForEach(p => {
                 p.Kill();
                 Logger.WriteLine($"Killed node process {p.Id}",Logger.Type.DebugOutput);
             });

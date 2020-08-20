@@ -16,12 +16,11 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Ps4_Pkg_Sender {
     public partial class MainForm : Form {
-
-        
 
         bool connected = false;
 
@@ -36,11 +35,18 @@ namespace Ps4_Pkg_Sender {
 
         BackgroundWorker queueBackgroundWorker;
 
+        static Server server;
+
         struct Server {
             private static Random random = new Random();
+
+            static readonly HashSet<int> NodeJsProcessSet = new HashSet<int>();
+
+            int currentProcessPid;
+
             public string PS4IP { get; set; }
             public string ServerIp { get; set; }
-            static int ServerPort { get; set; } = 8080;
+            public int ServerPort { get; set; }
 
             public bool IsRunning { get; internal set; }
 
@@ -67,20 +73,42 @@ namespace Ps4_Pkg_Sender {
             }
 
             public void StartServer(PkgInfo info) {
-                NodeJSUtil.KillAllNodeJSInstances();
+
+                foreach(var proc in NodeJSUtil.GetNodeProcesses()) {
+                    NodeJsProcessSet.Add(proc.Id);
+                }
+
+                ServerPort = 0;
+
                 Logger.WriteLine("::StartServer - Starting server in directory " + Path.GetDirectoryName(info.FilePath),Logger.Type.StandardOutput);
                 var cmdProcess = new Process();
                 var path = Path.GetDirectoryName(info.FilePath);
                 cmdProcess.StartInfo.FileName = "cmd.exe";
-                cmdProcess.StartInfo.Arguments = $"/C http-server \"{path}\" -p {GetNextBestPort()}";
+                cmdProcess.StartInfo.Arguments = $"/C http-server \"{path}\" ";
                 cmdProcess.StartInfo.UseShellExecute = false;
                 cmdProcess.StartInfo.CreateNoWindow = true;
                 cmdProcess.StartInfo.RedirectStandardOutput = true;
+                cmdProcess.StartInfo.RedirectStandardError = true;
                 if (Directory.GetLogicalDrives().Contains(path)) {
                     cmdProcess.StartInfo.Arguments = cmdProcess.StartInfo.Arguments.Replace(@"\", @"\\");
                 }
                 cmdProcess.Start();
-              
+
+                //Assumption will be that it should always be found
+                currentProcessPid = 0;
+                while (currentProcessPid == 0) {
+                    try {
+                        currentProcessPid = NodeJSUtil.GetNodeProcesses()
+                                                      .ToList()
+                                                      .Find(proc => !NodeJsProcessSet.Contains(proc.Id))
+                                                      .Id;
+                    } catch (Exception) {
+
+                    }
+                    System.Threading.Thread.Sleep(100);
+                }
+
+
                 var temp = cmdProcess;
                 System.Threading.Tasks.Task.Run(() => {
                     while (temp.Handle == IntPtr.Zero) {
@@ -89,15 +117,56 @@ namespace Ps4_Pkg_Sender {
                     var stdout = "";
                     while (stdout != null) {
                         stdout = temp.StandardOutput.ReadLine();
-                        Logger.WriteLine(stdout,Logger.Type.StandardOutput);
+                        if (stdout != null) {
+                            var match = Regex.Match(stdout, @"\[32m(\d+)\S");
+                            if (match.Success) {
+                                server.ServerPort = int.Parse(match.Groups[1].Value);
+                            }
+                            Logger.WriteLine(stdout, Logger.Type.StandardOutput);
+                        }
                     }
                 });
+
+                System.Threading.Tasks.Task.Run(() => {
+                    while (temp.Handle == IntPtr.Zero) {
+                        System.Threading.Thread.Sleep(100);
+                    }
+                    var stderr = "";
+                    while (stderr != null) {
+                        stderr = temp.StandardError.ReadLine();
+                        if (stderr != null) {
+                            if (stderr.Contains("EADDRINUSE")) {
+                                server.IsRunning = false;
+                                break;
+                            }
+                        }
+                        Logger.WriteLine(stderr, Logger.Type.StandardOutput);
+                    }
+                });
+
+                //Wait For Port to be set
+                while (IsRunning && ServerPort == 0) {
+                    System.Threading.Thread.Sleep(100);
+                }
+
                 IsRunning = true;
+            }
+
+            private void KillProcess(int pid) {
+                try {
+                    var process = Process.GetProcessById(pid);
+                    if (process != null && !process.HasExited) {
+                        process.Kill();
+                        process.WaitForExit();
+                    }
+                } catch {
+
+                }
             }
 
             public void StopServer() {
                 Logger.WriteLine("Killed Old Server Process",Logger.Type.DebugOutput);
-                NodeJSUtil.KillAllNodeJSInstances();
+                KillProcess(currentProcessPid);
                 IsRunning = false;
             }
 
@@ -205,7 +274,7 @@ namespace Ps4_Pkg_Sender {
         }
 
         private Server GetServerDetails() {
-            Server server = new Server();
+            server = new Server();
             server.PS4IP = textBoxPS4IP.Text;
             server.ServerIp = comboBoxServerIP.SelectedItem.ToString();
             return server;
@@ -295,7 +364,9 @@ namespace Ps4_Pkg_Sender {
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
             SaveSettings();
-            NodeJSUtil.KillAllNodeJSInstances();
+            if(!server.Equals(default(Server))){
+                server.StopServer();
+            }
         }
 
         private void PopulateValidIPs() {
@@ -650,6 +721,7 @@ namespace Ps4_Pkg_Sender {
                     server.StartServer(queueItem.PkgInfo);
                     continue;
                 }
+
                 try {
 
                     try {
@@ -710,8 +782,10 @@ namespace Ps4_Pkg_Sender {
                                 Logger.WriteLine("::status error - " + ex.Message,Logger.Type.StandardOutput);
                                 throw new SkipItemException(Enums.TaskType.Failed, "Something is wrong with the server. It returned HTTP 500");
                             }
-                        }else if(ex.Status == WebExceptionStatus.ConnectionClosed) {
+                        } else if(ex.Status == WebExceptionStatus.ConnectionClosed) {
                             throw new SkipItemException(Enums.TaskType.Failed, "Remote PKG Installer has crashed. Please restart it on your PS4");
+                        } else if (ex.Status == WebExceptionStatus.ConnectFailure) {
+                            throw new SkipItemException(Enums.TaskType.Failed, "Couldn't Connect to RPI. Check your firewall settings or ensure that the application is running.");
                         }
                     }
 
@@ -731,6 +805,7 @@ namespace Ps4_Pkg_Sender {
                     queueItem.UpdateTask(ex.TaskType, ex.Message, listViewItemsQueue);
                     ps4PkgQueue.Dequeue();
                     server.StopServer();
+                    taskId = 0;
                 }
                 System.Threading.Thread.Sleep(500);
             }
