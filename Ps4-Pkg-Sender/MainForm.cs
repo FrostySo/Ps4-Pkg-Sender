@@ -931,7 +931,7 @@ namespace Ps4_Pkg_Sender {
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e) {
             listViewItemsQueue.BeginUpdate();
             //Delete from the reverse
-            for (int i = listViewItemsQueue.Items.Count - 1; i > 0; --i) {
+            for (int i = listViewItemsQueue.Items.Count - 1; i >= 0; --i) {
                 if(listViewItemsQueue.Items[i].Selected)
                     listViewItemsQueue.Items.RemoveAt(i);
             }
