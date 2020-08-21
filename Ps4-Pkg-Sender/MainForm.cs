@@ -891,11 +891,27 @@ namespace Ps4_Pkg_Sender {
             });
         }
 
-        private void toolStripMenuItemMarkAsTheme_Click(object sender, EventArgs e) {
+        private void themeToolStripMenuItem_Click(object sender, EventArgs e) {
+            MarkItemAs(Enums.PkgType.Addon_Theme, this.listViewItemsQueue);
+        }
+
+        private void dLCToolStripMenuItem_Click(object sender, EventArgs e) {
+            MarkItemAs(Enums.PkgType.Additional_Content, this.listViewItemsQueue);
+        }
+
+        private void patchToolStripMenuItem_Click(object sender, EventArgs e) {
+            MarkItemAs(Enums.PkgType.Patch, this.listViewItemsQueue);
+        }
+
+        private void gameToolStripMenuItem_Click(object sender, EventArgs e) {
+            MarkItemAs(Enums.PkgType.Game, this.listViewItemsQueue);
+        }
+
+        private void MarkItemAs(Enums.PkgType pkgType,ListView listView) {
             ChangeItemStatus(q => {
-                q.UpdateType(Enums.PkgType.Addon_Theme, this.listViewItemsQueue);
+                q.UpdateType(pkgType, listView);
             });
-            ps4PkgList.Sort(); //Re-sort so theme's get pushed to the bottom
+            ps4PkgList.Sort(); //Re-sort so items get pushed to their specifiic order
         }
 
         private void label3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
@@ -942,6 +958,6 @@ namespace Ps4_Pkg_Sender {
             myListView.Sort();
         }
 
-    
+       
     }
 }

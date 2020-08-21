@@ -48,13 +48,17 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFocused = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.requeueItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemMarkAsTheme = new System.Windows.Forms.ToolStripMenuItem();
+            this.markAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.themeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dLCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.patchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.markForUninstallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTipInfo = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStripNoFocus = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
+            this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.contextMenuStripFocused.SuspendLayout();
@@ -300,7 +304,7 @@
             // 
             this.contextMenuStripFocused.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.requeueItemToolStripMenuItem,
-            this.toolStripMenuItemMarkAsTheme,
+            this.markAsToolStripMenuItem,
             this.markForUninstallToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.clearAllToolStripMenuItem});
@@ -314,12 +318,37 @@
             this.requeueItemToolStripMenuItem.Text = "Requeue Item";
             this.requeueItemToolStripMenuItem.Click += new System.EventHandler(this.requeueItemToolStripMenuItem_Click);
             // 
-            // toolStripMenuItemMarkAsTheme
+            // markAsToolStripMenuItem
             // 
-            this.toolStripMenuItemMarkAsTheme.Name = "toolStripMenuItemMarkAsTheme";
-            this.toolStripMenuItemMarkAsTheme.Size = new System.Drawing.Size(170, 22);
-            this.toolStripMenuItemMarkAsTheme.Text = "Mark As Theme";
-            this.toolStripMenuItemMarkAsTheme.Click += new System.EventHandler(this.toolStripMenuItemMarkAsTheme_Click);
+            this.markAsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.themeToolStripMenuItem,
+            this.gameToolStripMenuItem,
+            this.dLCToolStripMenuItem,
+            this.patchToolStripMenuItem});
+            this.markAsToolStripMenuItem.Name = "markAsToolStripMenuItem";
+            this.markAsToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.markAsToolStripMenuItem.Text = "Mark As";
+            // 
+            // themeToolStripMenuItem
+            // 
+            this.themeToolStripMenuItem.Name = "themeToolStripMenuItem";
+            this.themeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.themeToolStripMenuItem.Text = "Theme";
+            this.themeToolStripMenuItem.Click += new System.EventHandler(this.themeToolStripMenuItem_Click);
+            // 
+            // dLCToolStripMenuItem
+            // 
+            this.dLCToolStripMenuItem.Name = "dLCToolStripMenuItem";
+            this.dLCToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dLCToolStripMenuItem.Text = "DLC";
+            this.dLCToolStripMenuItem.Click += new System.EventHandler(this.dLCToolStripMenuItem_Click);
+            // 
+            // patchToolStripMenuItem
+            // 
+            this.patchToolStripMenuItem.Name = "patchToolStripMenuItem";
+            this.patchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.patchToolStripMenuItem.Text = "Patch";
+            this.patchToolStripMenuItem.Click += new System.EventHandler(this.patchToolStripMenuItem_Click);
             // 
             // markForUninstallToolStripMenuItem
             // 
@@ -355,6 +384,13 @@
             this.toolStripMenuItem4.Size = new System.Drawing.Size(156, 22);
             this.toolStripMenuItem4.Text = "Add Package(s)";
             this.toolStripMenuItem4.Click += new System.EventHandler(this.toolStripMenuItem4_Click);
+            // 
+            // gameToolStripMenuItem
+            // 
+            this.gameToolStripMenuItem.Name = "gameToolStripMenuItem";
+            this.gameToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.gameToolStripMenuItem.Text = "Game";
+            this.gameToolStripMenuItem.Click += new System.EventHandler(this.gameToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -406,12 +442,16 @@
         private System.Windows.Forms.Label labelProgressNotify;
         private System.Windows.Forms.LinkLabel label3;
         private System.Windows.Forms.ToolStripMenuItem requeueItemToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemMarkAsTheme;
+        private System.Windows.Forms.ToolStripMenuItem themeToolStripMenuItem;
         private System.Windows.Forms.Label labelCheckDelay;
         private System.Windows.Forms.ToolTip toolTipInfo;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripNoFocus;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem markAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dLCToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem patchToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gameToolStripMenuItem;
     }
 }
 
