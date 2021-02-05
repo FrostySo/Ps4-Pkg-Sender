@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{184D45C2-8351-4B71-911E-A23A3B7A8FC9}</ProjectGuid>
+    <ProjectGuid>{51d50794-97ec-462d-9b70-236396d47623}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Ps4_Pkg_Sender</RootNamespace>
     <AssemblyName>Ps4-Pkg-Sender</AssemblyName>
