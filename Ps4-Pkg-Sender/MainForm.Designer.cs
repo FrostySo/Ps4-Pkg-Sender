@@ -32,9 +32,9 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panel1 = new System.Windows.Forms.Panel();
             this.labelProgressNotify = new System.Windows.Forms.Label();
-            this.progressBar1 = new Ps4_Pkg_Sender.Controls.CustomProgressBar();
             this.checkBoxRecursive = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.linkLabelAddServerIp = new System.Windows.Forms.LinkLabel();
             this.labelCheckDelay = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.LinkLabel();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -59,7 +59,7 @@
             this.toolTipInfo = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStripNoFocus = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
-            this.linkLabelAddServerIp = new System.Windows.Forms.LinkLabel();
+            this.progressBar1 = new Ps4_Pkg_Sender.Controls.CustomProgressBar();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.contextMenuStripFocused.SuspendLayout();
@@ -141,16 +141,6 @@
             this.labelProgressNotify.Size = new System.Drawing.Size(0, 16);
             this.labelProgressNotify.TabIndex = 15;
             // 
-            // progressBar1
-            // 
-            this.progressBar1.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.progressBar1.ExtraText = null;
-            this.progressBar1.Location = new System.Drawing.Point(431, 67);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.SecondsRemaining = ((long)(0));
-            this.progressBar1.Size = new System.Drawing.Size(357, 23);
-            this.progressBar1.TabIndex = 14;
-            // 
             // checkBoxRecursive
             // 
             this.checkBoxRecursive.AutoSize = true;
@@ -185,6 +175,20 @@
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server Settings";
+            // 
+            // linkLabelAddServerIp
+            // 
+            this.linkLabelAddServerIp.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(116)))), ((int)(((byte)(12)))));
+            this.linkLabelAddServerIp.AutoSize = true;
+            this.linkLabelAddServerIp.LinkColor = System.Drawing.Color.White;
+            this.linkLabelAddServerIp.Location = new System.Drawing.Point(160, 82);
+            this.linkLabelAddServerIp.Name = "linkLabelAddServerIp";
+            this.linkLabelAddServerIp.Size = new System.Drawing.Size(93, 15);
+            this.linkLabelAddServerIp.TabIndex = 19;
+            this.linkLabelAddServerIp.TabStop = true;
+            this.linkLabelAddServerIp.Text = "Add Server IP";
+            this.linkLabelAddServerIp.VisitedLinkColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.linkLabelAddServerIp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelAddServerIp_LinkClicked);
             // 
             // labelCheckDelay
             // 
@@ -394,19 +398,15 @@
             this.toolStripMenuItem4.Text = "Add Package(s)";
             this.toolStripMenuItem4.Click += new System.EventHandler(this.toolStripMenuItem4_Click);
             // 
-            // linkLabelAddServerIp
+            // progressBar1
             // 
-            this.linkLabelAddServerIp.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(116)))), ((int)(((byte)(12)))));
-            this.linkLabelAddServerIp.AutoSize = true;
-            this.linkLabelAddServerIp.LinkColor = System.Drawing.Color.White;
-            this.linkLabelAddServerIp.Location = new System.Drawing.Point(160, 82);
-            this.linkLabelAddServerIp.Name = "linkLabelAddServerIp";
-            this.linkLabelAddServerIp.Size = new System.Drawing.Size(93, 15);
-            this.linkLabelAddServerIp.TabIndex = 19;
-            this.linkLabelAddServerIp.TabStop = true;
-            this.linkLabelAddServerIp.Text = "Add Server IP";
-            this.linkLabelAddServerIp.VisitedLinkColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.linkLabelAddServerIp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelAddServerIp_LinkClicked);
+            this.progressBar1.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.progressBar1.ExtraText = null;
+            this.progressBar1.Location = new System.Drawing.Point(431, 67);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.SecondsRemaining = ((long)(0));
+            this.progressBar1.Size = new System.Drawing.Size(357, 23);
+            this.progressBar1.TabIndex = 14;
             // 
             // MainForm
             // 
@@ -418,7 +418,7 @@
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
-            this.Text = "Ps4 Pkg Sender V1.05";
+            this.Text = "Ps4 Pkg Sender V1.06";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
