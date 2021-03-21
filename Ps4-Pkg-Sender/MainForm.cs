@@ -662,13 +662,6 @@ namespace Ps4_Pkg_Sender {
             List<PkgInfo> patchesList = new List<PkgInfo>();
             foreach (var filePath in pkgFilePaths) {
                 var pkgFilePath = filePath;
-                var fileName = Path.GetFileName(pkgFilePath);
-                if(fileName.Contains(" ")) {
-                    fileName = fileName.Replace(" ", ".");
-                    pkgFilePath = pkgFilePath.Substring(0,pkgFilePath.Length-fileName.Length) + fileName;
-                    File.Move(filePath, pkgFilePath);
-                }
-
               try {
                     var pkg = PS4_Tools.PKG.SceneRelated.Read_PKG(pkgFilePath);
                     PkgInfo pkgInfo = new PkgInfo();
