@@ -1,4 +1,4 @@
-﻿using Ps4_Pkg_Sender.Enums;
+using Ps4_Pkg_Sender.Enums;
 using System.Collections.Generic;
 
 namespace Ps4_Pkg_Sender.Ps4 {
@@ -14,7 +14,21 @@ namespace Ps4_Pkg_Sender.Ps4 {
 
         public string FilePath { get; set; }
 
-        public string[] PkgFiles { get; set; }
+        //public string[] PkgFiles { get; set; }
+        public string[] PatchSegments { get; set; }
+
+        private string NameFromFile(string filePath) {
+            return System.IO.Path.GetFileName(filePath);
+        }
+
+        public string[] GetFilePaths() {
+            var filePathList = new List<string>();
+            filePathList.Add(NameFromFile(FilePath));
+            if (PatchSegments != null) {
+                filePathList.AddRange(PatchSegments);
+            }
+            return filePathList.ToArray();
+        }
 
         private static readonly SortedList<PkgType, int> PriorityOrder = new SortedList<PkgType, int>{
             {PkgType.Game,0},

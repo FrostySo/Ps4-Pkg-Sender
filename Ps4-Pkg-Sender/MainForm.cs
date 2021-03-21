@@ -35,6 +35,8 @@ namespace Ps4_Pkg_Sender {
 
         BackgroundWorker queueBackgroundWorker;
 
+        FileRenameService fileRenameService = new FileRenameService();
+
         static Server server;
 
         public struct Server {
@@ -218,7 +220,7 @@ namespace Ps4_Pkg_Sender {
                     return true;
                 }
                 var response = HttpUtil.Post($"http://{PS4IP}:12800/api/install",
-                HttpUtil.GetInstallJson(pkgInfo.PkgFiles, ServerIp, ServerPort));
+                HttpUtil.GetInstallJson(pkgInfo.GetFilePaths(), ServerIp, ServerPort));
                 //{ "status": "fail", "error_code": 0x80990004 }
                 if (response.Contains("task_id")) {
                     id = long.Parse(JToken.Parse(response)["task_id"].ToString());
@@ -279,6 +281,8 @@ namespace Ps4_Pkg_Sender {
             queueBackgroundWorker.WorkerSupportsCancellation = true;
             queueBackgroundWorker.DoWork += queueWorker_DoWork;
             queueBackgroundWorker.ProgressChanged += queueWorker_ProgressChanged;
+            fileRenameService = new FileRenameService();
+            fileRenameService.StartService();
         }
 
         private void SaveSettings() {
@@ -618,7 +622,40 @@ namespace Ps4_Pkg_Sender {
             QueueItem queueItem = new QueueItem(listViewItem, pkgInfo);
             ps4PkgList.Add(queueItem);
         }
-        
+
+        private bool SanitizePathNeeded(PkgInfo pkgInfo, out FileRenameInfo fileRenameInfo) {
+            fileRenameInfo = null;
+            var pattern = @"^[\\a-zA-Z0-9-_\.]+$";
+            var currentFileName = Path.GetFileName(pkgInfo.FilePath);
+            var match = Regex.Match(currentFileName, pattern);
+            if (!Regex.IsMatch(currentFileName,pattern)) {
+
+                fileRenameInfo = new FileRenameInfo() {
+                    CurrentName = currentFileName,
+                    CurrentPath = Path.GetFullPath(pkgInfo.FilePath),
+                };
+
+                pattern = pattern.Substring(1, pattern.Length - 2);
+                string newFileName = "";
+                var newMatch = Regex.Match(currentFileName, pattern);
+                while (newMatch.Success) {
+                    newFileName += newMatch.Value;
+                    newMatch = newMatch.NextMatch();
+                }
+                int maxFileNameSize = 60;
+                if(newFileName.Length > maxFileNameSize) {
+                    //PS4 only seems to like titles < 60 (including ".pkg")
+                    //So we eliminate the remainder from the start
+                    //this is only used for renaming files, nothing more
+                    //so it does not matter if the name looks weird. It's only temporary :)
+                    newFileName = newFileName.Remove(0,newFileName.Length - maxFileNameSize);
+                }
+                fileRenameInfo.WantedName = newFileName;
+                return true;
+            }
+            return false;
+        }
+
         private void AddAllValidItems(string[] paths) {
             var pkgFilePaths = GetFilesForFileExtension(".pkg", paths, true);
             List<PkgInfo> pkgList = new List<PkgInfo>();
@@ -632,7 +669,7 @@ namespace Ps4_Pkg_Sender {
                     File.Move(filePath, pkgFilePath);
                 }
 
-                try {
+              try {
                     var pkg = PS4_Tools.PKG.SceneRelated.Read_PKG(pkgFilePath);
                     PkgInfo pkgInfo = new PkgInfo();
                     pkgInfo.FilePath = pkgFilePath;
@@ -641,7 +678,7 @@ namespace Ps4_Pkg_Sender {
                     pkgInfo.Version = pkg.Param.APP_VER;
                     pkgInfo.Type = Enums.Parser.Parse(pkg.PKG_Type);
                     pkgInfo.ContentID = pkg.Content_ID;
-                    pkgInfo.PkgFiles = new string[] { Path.GetFileName(pkgFilePath) };
+                    //pkgInfo.PkgFiles = new string[] { Path.GetFileName(pkgFilePath) };
 
                     if (pkgInfo.Type == Enums.PkgType.Patch) {
                         patchesList.Add(pkgInfo);
@@ -666,10 +703,7 @@ namespace Ps4_Pkg_Sender {
 
             for (int i = 0; i < patchesList.Count; ++i) {
                 var filePaths = patchDict[patchesList[i].TitleID];
-                if (filePaths.Count == 0) {
-                    filePaths.Add(Path.GetFileName(patchesList[i].FilePath));
-                }
-                patchesList[i].PkgFiles = filePaths.ToArray();
+                patchesList[i].PatchSegments = filePaths.ToArray();
                 AddItem(patchesList[i]);
             }
 
@@ -714,14 +748,14 @@ namespace Ps4_Pkg_Sender {
 
                     try {
 
-
-                        switch (queueItem.TaskType) {
-                            case Enums.TaskType.Uninstalling:
-                            if (server.Uninstall(queueItem.PkgInfo)) {
+                            if (SanitizePathNeeded(queueItem.PkgInfo, out var renameInfo)) {
+                                queueItem.FileRenameInfo = renameInfo;
+                                if (!fileRenameService.Rename(renameInfo)) {
+                                    throw new SkipItemException(Enums.TaskType.Failed, "Failed to sanitize file. Rename this file manually and re-add to the sender.");
                                 finished = true;
                                 taskId = 0;
-                            }
-                            break;
+                                }
+                                queueItem.PkgInfo.FilePath = renameInfo.CurrentPath;
 
                             case Enums.TaskType.Queued:
                             if (queueItem.Uninstall) {
@@ -829,6 +863,9 @@ namespace Ps4_Pkg_Sender {
                     server.StopServer();
                     taskId = 0;
                     skipInstallCheck = false;
+                if (queueItem.FileRenameInfo != null) {
+                    //Queue the file to the service, so we can rename it to the old filename
+                    fileRenameService.FileRenameQueue.Enqueue(queueItem.FileRenameInfo);
                 }
                 System.Threading.Thread.Sleep(500);
             }

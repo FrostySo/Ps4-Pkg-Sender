@@ -1,4 +1,4 @@
-﻿using Ps4_Pkg_Sender.Enums;
+using Ps4_Pkg_Sender.Enums;
 using Ps4_Pkg_Sender.Extensions;
 using Ps4_Pkg_Sender.Ps4;
 using System.Windows.Forms;
@@ -12,7 +12,7 @@ namespace Ps4_Pkg_Sender {
 
         public bool Uninstall { get; set; }
 
-        public QueueItem(ListViewItem listViewItem, Ps4.PkgInfo pkgInfo) {
+        public Models.FileRenameInfo FileRenameInfo { get; set; }
             this.ListViewItem = listViewItem;
             this.TaskType = TaskType.Queued;
             this.PkgInfo = pkgInfo;
