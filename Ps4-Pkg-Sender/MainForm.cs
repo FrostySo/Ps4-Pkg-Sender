@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ps4_Pkg_Sender.Controls.Sorting;
 using Ps4_Pkg_Sender.Exceptions;
@@ -37,7 +37,7 @@ namespace Ps4_Pkg_Sender {
 
         static Server server;
 
-        struct Server {
+        public struct Server {
             private static Random random = new Random();
 
             static readonly HashSet<int> NodeJsProcessSet = new HashSet<int>();
@@ -77,7 +77,6 @@ namespace Ps4_Pkg_Sender {
                 foreach(var proc in NodeJSUtil.GetNodeProcesses()) {
                     NodeJsProcessSet.Add(proc.Id);
                 }
-
                 Logger.WriteLine("::StartServer - Starting server in directory " + Path.GetDirectoryName(info.FilePath),Logger.Type.StandardOutput);
                 var cmdProcess = new Process();
                 var path = Path.GetDirectoryName(info.FilePath);
@@ -96,48 +95,48 @@ namespace Ps4_Pkg_Sender {
                 currentProcessPid = 0;
                 while (currentProcessPid == 0) {
                     try {
-                        currentProcessPid = NodeJSUtil.GetNodeProcesses()
-                                                      .ToList()
-                                                      .Find(proc => !NodeJsProcessSet.Contains(proc.Id))
-                                                      .Id;
-                    } catch (Exception) {
+                        var nodeProcesses = NodeJSUtil.GetNodeProcesses().ToList();
+                        if (nodeProcesses.Count > 0) {
+                            currentProcessPid = nodeProcesses
+                                                    .Find(proc => !NodeJsProcessSet.Contains(proc.Id))
+                                                    .Id;
+                        }
+                    } catch (Exception e) {
 
                     }
                     System.Threading.Thread.Sleep(100);
                 }
 
-
                 var temp = cmdProcess;
-                System.Threading.Tasks.Task.Run(() => {
-                    while (temp.Handle == IntPtr.Zero) {
-                        System.Threading.Thread.Sleep(100);
-                    }
-                    var stdout = "";
-                    while (stdout != null) {
-                        stdout = temp.StandardOutput.ReadLine();
-                        if (stdout != null) {
-                            Logger.WriteLine(stdout, Logger.Type.StandardOutput);
-                        }
-                    }
-                });
+                while (temp.Handle == IntPtr.Zero) {
+                    System.Threading.Thread.Sleep(100);
+                }
 
-                System.Threading.Tasks.Task.Run(() => {
-                    while (temp.Handle == IntPtr.Zero) {
-                        System.Threading.Thread.Sleep(100);
-                    }
-                    var stderr = "";
-                    while (stderr != null) {
-                        stderr = temp.StandardError.ReadLine();
-                        if (stderr != null) {
-                            if (stderr.Contains("EADDRINUSE")) {
-                                server.IsRunning = false;
-                                break;
-                            }
+                Stopwatch stopwatchTimeoutTracker = new Stopwatch();
+                stopwatchTimeoutTracker.Start();
+                IsRunning = false;
+                
+                //Couldn't think of a better solution
+                //Just gotta hope this works well
+                //Otherwise we'll be stuck here forever :( 
+                var stdout = "";
+                while (stdout != null) {
+                    stdout = temp.StandardOutput.ReadLine();
+                    if (stdout != null) {
+                        if (stdout.ToLower().Contains("starting up http-server, serving")) {
+                            IsRunning = true;
+                            break;
                         }
-                        Logger.WriteLine(stderr, Logger.Type.StandardOutput);
+                        Logger.WriteLine(stdout, Logger.Type.StandardOutput);
                     }
-                });
-                IsRunning = true;
+                }
+
+                if (!IsRunning && temp.HasExited) {
+                    var strdErr = temp.StandardError.ReadToEnd();
+                    if (strdErr.Contains("EADDRINUSE")) {
+                        throw new ServerInitializationException("Address already in use");
+                    }
+                }
             }
 
             private void KillProcess(int pid) {
