@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ps4_Pkg_Sender.Controls.Sorting;
 using Ps4_Pkg_Sender.Exceptions;

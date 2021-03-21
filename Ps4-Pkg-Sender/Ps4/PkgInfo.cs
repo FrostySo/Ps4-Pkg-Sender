@@ -1,4 +1,4 @@
-using Ps4_Pkg_Sender.Enums;
+﻿using Ps4_Pkg_Sender.Enums;
 using System.Collections.Generic;
 
 namespace Ps4_Pkg_Sender.Ps4 {
