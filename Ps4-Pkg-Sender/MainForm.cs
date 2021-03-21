@@ -291,7 +291,7 @@ namespace Ps4_Pkg_Sender {
             settings.Ps4IP = textBoxPS4IP.Text;
             settings.ServerIP = comboBoxServerIP.SelectedItem.ToString();
             settings.RecursiveSearch = checkBoxRecursive.Checked;
-            settings.ProgressCheckDelay = this.Settings.ProgressCheckDelay;
+            settings.ProgressCheckDelay = Settings.ProgressCheckDelay;
             File.WriteAllText("settings.json", JsonConvert.SerializeObject(settings, Formatting.Indented));
         }
 
