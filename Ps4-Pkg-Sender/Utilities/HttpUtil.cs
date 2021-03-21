@@ -1,10 +1,5 @@
 ﻿using Ps4_Pkg_Sender.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ps4_Pkg_Sender.Utilities {
     public class HttpUtil {
