@@ -1,4 +1,4 @@
-using Ps4_Pkg_Sender.Enums;
+﻿using Ps4_Pkg_Sender.Enums;
 using Ps4_Pkg_Sender.Extensions;
 using Ps4_Pkg_Sender.Ps4;
 using System.Windows.Forms;
@@ -13,14 +13,37 @@ namespace Ps4_Pkg_Sender {
         public bool Uninstall { get; set; }
 
         public Models.FileRenameInfo FileRenameInfo { get; set; }
+
+        public ListView listView;
+        public QueueItem(ListViewItem listViewItem, ListView listView, Ps4.PkgInfo pkgInfo) {
+            this.ListViewItem = listViewItem;
+            this.TaskType = TaskType.Queued;
+            this.PkgInfo = pkgInfo;
+            this.listView = listView;
+        }
+
+        public QueueItem(ListViewItem listViewItem,Ps4.PkgInfo pkgInfo) {
             this.ListViewItem = listViewItem;
             this.TaskType = TaskType.Queued;
             this.PkgInfo = pkgInfo;
         }
 
+
+        public void UpdateType(Enums.PkgType pkgType) {
+            if(listView != null) {
+                UpdateType(pkgType, listView);
+            }
+        }
+
         public void UpdateType(Enums.PkgType pkgType,ListView listView) {
             listView.InvokeIfRequired(() => ListViewItem.SubItems[2].Text = pkgType.ToString());
             this.PkgInfo.Type = pkgType;
+        }
+
+        public void UpdateTask(TaskType taskType) {
+            if(listView != null) {
+                UpdateTask(taskType, null, listView);
+            }
         }
 
         public void UpdateTask(TaskType taskType, ListView listView) {

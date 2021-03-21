@@ -3,7 +3,9 @@ using Newtonsoft.Json.Linq;
 using Ps4_Pkg_Sender.Controls.Sorting;
 using Ps4_Pkg_Sender.Exceptions;
 using Ps4_Pkg_Sender.Extensions;
+using Ps4_Pkg_Sender.Models;
 using Ps4_Pkg_Sender.Ps4;
+using Ps4_Pkg_Sender.Services;
 using Ps4_Pkg_Sender.Utilities;
 using Ps4_Pkg_Sender.WinApi;
 using System;
@@ -164,7 +166,6 @@ namespace Ps4_Pkg_Sender {
                 var response = HttpUtil.Post($"http://{PS4IP}:12800/api/get_task_progress", $"{{\"task_id\":{taskID}}}");
                 Logger.WriteLine("::GetInstallProgress - " + response,Logger.Type.StandardOutput);
                 var progress = JsonConvert.DeserializeObject<Json.Ps4Progress>(response);
-
                 return new DataTrasmittedProgress(progress.LengthTotal,progress.TransferredTotal, progress.RestSecTotal);
             }
 
@@ -619,7 +620,7 @@ namespace Ps4_Pkg_Sender {
             listViewItem.SubItems.Add(pkgInfo.Type.ToString());
             listViewItem.SubItems.Add(Enums.TaskType.Queued.ToString());
             this.listViewItemsQueue.InvokeIfRequired(() => listViewItemsQueue.Items.Add(listViewItem));
-            QueueItem queueItem = new QueueItem(listViewItem, pkgInfo);
+            QueueItem queueItem = new QueueItem(listViewItem, listViewItemsQueue, pkgInfo);
             ps4PkgList.Add(queueItem);
         }
 
@@ -714,155 +715,67 @@ namespace Ps4_Pkg_Sender {
             Queue<QueueItem> ps4PkgQueue = new Queue<QueueItem>();
             ps4PkgList.Where(pkg => pkg.TaskType == Enums.TaskType.Queued).ToList().ForEach(p => ps4PkgQueue.Enqueue(p));
             int totalQueue = ps4PkgQueue.Count;
-            long taskId = 0;
-            bool finished = false;
-            bool forceStopped = false;
-            bool firstInitiate = true;
-            bool skipInstallCheck = false;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             while (ps4PkgQueue.Count > 0) {
 
                 this.labelProgressNotify.InvokeIfRequired(() =>labelProgressNotify.Text = $"Items left in queue {ps4PkgQueue.Count} of {totalQueue}");
-                var queueItem = ps4PkgQueue.Peek();
-
-                if (queueBackgroundWorker.CancellationPending) {
-                    queueItem.UpdateTask(Enums.TaskType.Queued, listViewItemsQueue);
-                    forceStopped = true;
-                    break;
-                }
-
-                if (!server.IsRunning) {
-                    server.StartServer(queueItem.PkgInfo);
-                    continue;
-                }
+                var queueItem = ps4PkgQueue.Dequeue();
 
                 try {
+                    bool checkedPrereqs = false;
+                    PkgTransfer pkgTransfer = new PkgTransfer(queueItem, queueBackgroundWorker, fileRenameService,server);
+                    while (!queueBackgroundWorker.CancellationPending) {
 
-                    try {
+                        if (!checkedPrereqs) {
 
                             if (SanitizePathNeeded(queueItem.PkgInfo, out var renameInfo)) {
                                 queueItem.FileRenameInfo = renameInfo;
                                 if (!fileRenameService.Rename(renameInfo)) {
                                     throw new SkipItemException(Enums.TaskType.Failed, "Failed to sanitize file. Rename this file manually and re-add to the sender.");
-                                finished = true;
-                                taskId = 0;
                                 }
                                 queueItem.PkgInfo.FilePath = renameInfo.CurrentPath;
-
-                            case Enums.TaskType.Queued:
-                            if (queueItem.Uninstall) {
-                                queueItem.UpdateTask(Enums.TaskType.Uninstalling, listViewItemsQueue);
-                            } else {
-                                queueItem.UpdateTask(Enums.TaskType.Sending, listViewItemsQueue);
                             }
-                            break;
+                            checkedPrereqs = true;
+                        }
 
-                            case Enums.TaskType.Sending:
-                            if (taskId == 0) {
-                                try {
-                                    if (server.InitiateInstall(queueItem.PkgInfo, skipInstallCheck,out taskId)) {
-                                        if (taskId == 0xAFFFFFF) { //no task id provided but already installed
-                                            finished = true;
-                                        }
-                                    }
-                                } catch (RPIErrorThrownException ex) {
-                                    bool doDefault = false;
-                                    switch (ex.ErrorCode) {
-                                        case 0x80990019: //SCE_BGFT_ERROR_TASK_NOENT
+                        if (!server.IsRunning) {
+                            server.StartServer(queueItem.PkgInfo);
+                        }
 
-                                        //The API is so fked up that it returns random shit
-                                        //This here will handle this weird use case
-                                        //Most apps should install with this here.
-                                        if (!skipInstallCheck) {
-                                            taskId = 0;
-                                            skipInstallCheck = true;
-                                        } else {
-                                            finished = true;
-                                            taskId = -1;
-                                        }
-                                        break;
+                        var transferProgress = pkgTransfer.Transfer();
 
-                                        case 0x80020016: //SCE_KERNEL_ERROR_EINVAL
-                                        if (skipInstallCheck) {
-                                            doDefault = true;
-                                        } else {
-                                            taskId = 0;
-                                            skipInstallCheck = true;
-                                        }
-                                        break;
+                        if (transferProgress.TimeLeft > 0) {
+                            this.progressBar1.InvokeIfRequired(() => progressBar1.ExtraText = $" ({transferProgress.TimeLeft})");
+                        }
 
-                                        default:
-                                        doDefault = true;
-                                        break;
-                                    }
-
-                                    if (doDefault) {
-                                        throw new SkipItemException(Enums.TaskType.Failed, $"Could not install. Error: 0x{ex.ErrorCode.ToString("X")} ({ex.Message})");
-                                    }
-                                }
-                          
-                            }
+                        if (transferProgress.TransferStatus == Enums.TransferStatus.Completed) {
+                            progressBar1.InvokeIfRequired(() => progressBar1.ResetProgressBar());
+                            queueItem.UpdateTask(Enums.TaskType.Finished, queueItem.Uninstall ? "Uninstalled" : "Installed", listViewItemsQueue);
+                            server.StopServer();
+                            
+                            System.Threading.Thread.Sleep(1000); //Sleep some seconds so we don't piss the server off
                             break;
                         }
 
-                        long timeLeft = (Settings.ProgressCheckDelay.ToMilliseconds() - stopwatch.ElapsedMilliseconds)/1000; 
-                        this.progressBar1.InvokeIfRequired(() => progressBar1.ExtraText = $" ({timeLeft})");
-
-                        if (taskId > 0 && taskId != 0xAFFFFFF && (stopwatch.ElapsedMilliseconds >= Settings.ProgressCheckDelay.ToMilliseconds() || firstInitiate)) {
-                            var progress = server.GetInstallProgress(taskId);
-                            if (progress != null) {
-                                firstInitiate = false;
-                                var total = progress.GetPercentageComplete();
-                                queueBackgroundWorker.ReportProgress(total, progress);
-                                if (total >= 100 || progress.ExceedsTotalLength()) {
-                                    finished = true;
-                                }
-                                stopwatch.Restart();
-                            }
-                        }
-                    } catch (WebException ex) { //Best not to ask why I did it like this
-                        if (ex.Status == WebExceptionStatus.ProtocolError) {
-                            var resp = ((HttpWebResponse)ex.Response);
-                            if (resp.StatusCode == HttpStatusCode.RequestTimeout) {
-                                throw new SkipItemException(Enums.TaskType.Timed_Out, "Operation timed out");
-                            } else if (resp.StatusCode == HttpStatusCode.InternalServerError) {
-                                Logger.WriteLine("::status error - " + ex.Message,Logger.Type.StandardOutput);
-                                throw new SkipItemException(Enums.TaskType.Failed, "Something is wrong with the server. It returned HTTP 500");
-                            }
-                        } else if(ex.Status == WebExceptionStatus.ConnectionClosed) {
-                            throw new SkipItemException(Enums.TaskType.Failed, "Remote PKG Installer has crashed. Please restart it on your PS4");
-                        } else if (ex.Status == WebExceptionStatus.ConnectFailure) {
-                            throw new SkipItemException(Enums.TaskType.Failed, "Couldn't Connect to RPI. Check your firewall settings or ensure that the application is running.");
-                        }
-                    }
-
-                    if (finished) {
-                        taskId = 0;
-                        progressBar1.InvokeIfRequired(() => progressBar1.ResetProgressBar());
-                        queueItem.UpdateTask(Enums.TaskType.Finished, queueItem.Uninstall ? "Uninstalled" : "Installed", listViewItemsQueue);
-                        server.StopServer();
-                        ps4PkgQueue.Dequeue();
-                        finished = false;
-                        skipInstallCheck = false;
-                        firstInitiate = true;
-                        System.Threading.Thread.Sleep(1000); //Sleep some seconds so we don't piss the server off
+                        System.Threading.Thread.Sleep(500);
                     }
 
                 }  catch (SkipItemException ex) { 
                     //Skip Item
                     queueItem.UpdateTask(ex.TaskType, ex.Message, listViewItemsQueue);
-                    ps4PkgQueue.Dequeue();
                     server.StopServer();
-                    taskId = 0;
-                    skipInstallCheck = false;
+                }catch(ServerInitializationException ex) {
+                    queueItem.UpdateTask(Enums.TaskType.Failed,$"Failed to initialize server - {ex.Message}", listViewItemsQueue);
+                }
+
                 if (queueItem.FileRenameInfo != null) {
                     //Queue the file to the service, so we can rename it to the old filename
                     fileRenameService.FileRenameQueue.Enqueue(queueItem.FileRenameInfo);
                 }
-                System.Threading.Thread.Sleep(500);
             }
-            if (!forceStopped) {
+
+            if (!queueBackgroundWorker.CancellationPending) {
                 this.labelProgressNotify.InvokeIfRequired(() => labelProgressNotify.Text = $"All Done!");
                 this.InvokeIfRequired(() => buttonProcessQueue_Click(null, null));
             } else {

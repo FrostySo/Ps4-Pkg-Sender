@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{51d50794-97ec-462d-9b70-236396d47623}</ProjectGuid>
+    <ProjectGuid>{51D50794-97EC-462D-9B70-236396D47623}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Ps4_Pkg_Sender</RootNamespace>
     <AssemblyName>Ps4-Pkg-Sender</AssemblyName>
@@ -84,25 +84,32 @@
     <Compile Include="Controls\Sorting\ListViewColumnSorter.cs" />
     <Compile Include="Enums\PkgType.cs" />
     <Compile Include="Enums\TaskType.cs" />
+    <Compile Include="Enums\TransferStatus.cs" />
     <Compile Include="Exceptions\RPIErrorThrownException.cs" />
+    <Compile Include="Exceptions\ServerInitializationException.cs" />
     <Compile Include="Exceptions\SkipItemException.cs" />
     <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="Extensions\IntegerExtenstions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Json\Ps4DataPayload.cs" />
     <Compile Include="Json\Ps4Progress.cs" />
-    <Compile Include="Json\Settings.cs" />
+    <Compile Include="Json\AppSettings.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\FileRenameInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ps4\DataTrasmittedProgress.cs" />
     <Compile Include="Ps4\PkgInfo.cs" />
+    <Compile Include="Ps4\PkgTransfer.cs" />
+    <Compile Include="Ps4\PkgTransferProgress.cs" />
     <Compile Include="QueueItem.cs" />
+    <Compile Include="Services\FileRenameService.cs" />
+    <Compile Include="Services\Service.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\HttpUtil.cs" />
     <Compile Include="Utilities\NodeJSUtil.cs" />
