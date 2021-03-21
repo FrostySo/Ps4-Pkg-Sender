@@ -371,6 +371,14 @@ namespace Ps4_Pkg_Sender {
                 }
             }
 
+            if (File.Exists(Settings.CustomIPsFile)) {
+                foreach(var line in File.ReadAllLines(Settings.CustomIPsFile)) {
+                    if (AddServerIpForm.IsValidIP(line)) {
+                        comboBoxServerIP.Items.Add(line);
+                    }
+                }
+            }
+
             if(comboBoxServerIP.Items.Count > 0) {
                 comboBoxServerIP.SelectedIndex = 0;
             }
@@ -402,7 +410,7 @@ namespace Ps4_Pkg_Sender {
         }
 
         private bool IsValidIP() {
-            return textBoxPS4IP.Text.Length > 0 && System.Text.RegularExpressions.Regex.IsMatch(textBoxPS4IP.Text, @"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}");
+            return AddServerIpForm.IsValidIP(textBoxPS4IP.Text);
         }
 
         private void ToggleConnected(bool connected) {
@@ -900,6 +908,17 @@ namespace Ps4_Pkg_Sender {
             myListView.Sort();
         }
 
-       
+        private void linkLabelAddServerIp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            var ipForm = new AddServerIpForm();
+            if(ipForm.ShowDialog() == DialogResult.OK) {
+                comboBoxServerIP.Items.Add(ipForm.IP);
+                var ipsList = new List<string>();
+                if (File.Exists(Settings.CustomIPsFile)) {
+                    ipsList.AddRange(File.ReadAllLines(Settings.CustomIPsFile));
+                }
+                ipsList.Add(ipForm.IP);
+                File.WriteAllLines(Settings.CustomIPsFile, ipsList);
+            }
+        }
     }
 }

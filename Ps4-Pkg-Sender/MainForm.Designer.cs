@@ -32,6 +32,7 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panel1 = new System.Windows.Forms.Panel();
             this.labelProgressNotify = new System.Windows.Forms.Label();
+            this.progressBar1 = new Ps4_Pkg_Sender.Controls.CustomProgressBar();
             this.checkBoxRecursive = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelCheckDelay = new System.Windows.Forms.Label();
@@ -49,6 +50,7 @@
             this.requeueItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.markAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.themeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dLCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.patchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.markForUninstallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,8 +59,7 @@
             this.toolTipInfo = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStripNoFocus = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
-            this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.progressBar1 = new Ps4_Pkg_Sender.Controls.CustomProgressBar();
+            this.linkLabelAddServerIp = new System.Windows.Forms.LinkLabel();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.contextMenuStripFocused.SuspendLayout();
@@ -140,6 +141,16 @@
             this.labelProgressNotify.Size = new System.Drawing.Size(0, 16);
             this.labelProgressNotify.TabIndex = 15;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.progressBar1.ExtraText = null;
+            this.progressBar1.Location = new System.Drawing.Point(431, 67);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.SecondsRemaining = ((long)(0));
+            this.progressBar1.Size = new System.Drawing.Size(357, 23);
+            this.progressBar1.TabIndex = 14;
+            // 
             // checkBoxRecursive
             // 
             this.checkBoxRecursive.AutoSize = true;
@@ -155,6 +166,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.linkLabelAddServerIp);
             this.groupBox1.Controls.Add(this.labelCheckDelay);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.panel2);
@@ -322,21 +334,28 @@
             // themeToolStripMenuItem
             // 
             this.themeToolStripMenuItem.Name = "themeToolStripMenuItem";
-            this.themeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.themeToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.themeToolStripMenuItem.Text = "Theme";
             this.themeToolStripMenuItem.Click += new System.EventHandler(this.themeToolStripMenuItem_Click);
+            // 
+            // gameToolStripMenuItem
+            // 
+            this.gameToolStripMenuItem.Name = "gameToolStripMenuItem";
+            this.gameToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            this.gameToolStripMenuItem.Text = "Game";
+            this.gameToolStripMenuItem.Click += new System.EventHandler(this.gameToolStripMenuItem_Click);
             // 
             // dLCToolStripMenuItem
             // 
             this.dLCToolStripMenuItem.Name = "dLCToolStripMenuItem";
-            this.dLCToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dLCToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.dLCToolStripMenuItem.Text = "DLC";
             this.dLCToolStripMenuItem.Click += new System.EventHandler(this.dLCToolStripMenuItem_Click);
             // 
             // patchToolStripMenuItem
             // 
             this.patchToolStripMenuItem.Name = "patchToolStripMenuItem";
-            this.patchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.patchToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.patchToolStripMenuItem.Text = "Patch";
             this.patchToolStripMenuItem.Click += new System.EventHandler(this.patchToolStripMenuItem_Click);
             // 
@@ -375,22 +394,19 @@
             this.toolStripMenuItem4.Text = "Add Package(s)";
             this.toolStripMenuItem4.Click += new System.EventHandler(this.toolStripMenuItem4_Click);
             // 
-            // gameToolStripMenuItem
+            // linkLabelAddServerIp
             // 
-            this.gameToolStripMenuItem.Name = "gameToolStripMenuItem";
-            this.gameToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.gameToolStripMenuItem.Text = "Game";
-            this.gameToolStripMenuItem.Click += new System.EventHandler(this.gameToolStripMenuItem_Click);
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.progressBar1.ExtraText = null;
-            this.progressBar1.Location = new System.Drawing.Point(431, 67);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.SecondsRemaining = ((long)(0));
-            this.progressBar1.Size = new System.Drawing.Size(357, 23);
-            this.progressBar1.TabIndex = 14;
+            this.linkLabelAddServerIp.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(116)))), ((int)(((byte)(12)))));
+            this.linkLabelAddServerIp.AutoSize = true;
+            this.linkLabelAddServerIp.LinkColor = System.Drawing.Color.White;
+            this.linkLabelAddServerIp.Location = new System.Drawing.Point(160, 82);
+            this.linkLabelAddServerIp.Name = "linkLabelAddServerIp";
+            this.linkLabelAddServerIp.Size = new System.Drawing.Size(93, 15);
+            this.linkLabelAddServerIp.TabIndex = 19;
+            this.linkLabelAddServerIp.TabStop = true;
+            this.linkLabelAddServerIp.Text = "Add Server IP";
+            this.linkLabelAddServerIp.VisitedLinkColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.linkLabelAddServerIp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelAddServerIp_LinkClicked);
             // 
             // MainForm
             // 
@@ -452,6 +468,7 @@
         private System.Windows.Forms.ToolStripMenuItem dLCToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem patchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gameToolStripMenuItem;
+        private System.Windows.Forms.LinkLabel linkLabelAddServerIp;
     }
 }
 

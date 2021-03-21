@@ -11,5 +11,8 @@ namespace Ps4_Pkg_Sender.Json {
 
         [JsonProperty("ProgressCheckDelay")]
         public int ProgressCheckDelay { get; set; } = 10;
+
+        [JsonIgnore]
+        public readonly string CustomIPsFile = "ipaddys.txt";
     }
 }

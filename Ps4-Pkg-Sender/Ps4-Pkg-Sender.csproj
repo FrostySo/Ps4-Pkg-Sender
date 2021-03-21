@@ -78,6 +78,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddServerIpForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddServerIpForm.Designer.cs">
+      <DependentUpon>AddServerIpForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CustomProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -116,6 +122,9 @@
     <Compile Include="Utilities\PkgTypeComparator.cs" />
     <Compile Include="Utilities\TimeFormatUtil.cs" />
     <Compile Include="WinApi\Win32Api.cs" />
+    <EmbeddedResource Include="AddServerIpForm.resx">
+      <DependentUpon>AddServerIpForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
