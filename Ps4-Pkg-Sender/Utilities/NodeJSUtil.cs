@@ -5,7 +5,9 @@ namespace Ps4_Pkg_Sender.Utilities {
     public static class NodeJSUtil {
 
         public static Process[] GetNodeProcesses() {
-            return Process.GetProcessesByName("Node");
+            return Process.GetProcesses()
+                .Where(n => n.ProcessName.ToLower().Equals("node"))
+                .ToArray();
         }
 
         public static bool IsNodeJsInstalled() {
