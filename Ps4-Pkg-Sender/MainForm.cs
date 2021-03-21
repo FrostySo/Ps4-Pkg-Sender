@@ -31,7 +31,7 @@ namespace Ps4_Pkg_Sender {
 
         ListViewColumnSorter listViewColumnSorter;
 
-        Json.Settings Settings = new Json.Settings();
+        public static Json.AppSettings Settings = new Json.AppSettings();
 
         BackgroundWorker queueBackgroundWorker;
 
@@ -286,7 +286,7 @@ namespace Ps4_Pkg_Sender {
         }
 
         private void SaveSettings() {
-            var settings = new Json.Settings();
+            var settings = new Json.AppSettings();
             settings.Ps4IP = textBoxPS4IP.Text;
             settings.ServerIP = comboBoxServerIP.SelectedItem.ToString();
             settings.RecursiveSearch = checkBoxRecursive.Checked;
@@ -298,7 +298,7 @@ namespace Ps4_Pkg_Sender {
             if (!File.Exists("settings.json")) {
                 SaveSettings();
             }
-            Settings = JsonConvert.DeserializeObject<Json.Settings>(File.ReadAllText("settings.json"));
+            Settings = JsonConvert.DeserializeObject<Json.AppSettings>(File.ReadAllText("settings.json"));
             int serverIPIndex = this.comboBoxServerIP.FindStringExact(Settings.ServerIP);
             if (serverIPIndex != -1) {
                 this.comboBoxServerIP.SelectedIndex = serverIPIndex;

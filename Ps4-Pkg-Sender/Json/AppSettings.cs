@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 
 namespace Ps4_Pkg_Sender.Json {
-    public class Settings {
+    public class AppSettings {
         [JsonProperty("ServerIP")]
         public string ServerIP { get; set; } 
         [JsonProperty("Ps4IP")]
