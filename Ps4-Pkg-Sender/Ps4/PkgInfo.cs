@@ -38,12 +38,23 @@ namespace Ps4_Pkg_Sender.Ps4 {
             {PkgType.Unknown,4 }
         };
 
+
         public int CompareTo(PkgInfo other) {
             return Comparer<int>.Default.Compare(PriorityOrder[this.Type], PriorityOrder[other.Type]);
         }
 
         public int Compare(PkgInfo x, PkgInfo y) {
             return Comparer<int>.Default.Compare(PriorityOrder[x.Type], PriorityOrder[y.Type]);
+        }
+
+        public override int GetHashCode() {
+            var hashCode = -783403272;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Title);
+            hashCode = hashCode * -1521134295 + Type.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(TitleID);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(ContentID);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Version);
+            return hashCode;
         }
     }
 }

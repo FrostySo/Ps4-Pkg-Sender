@@ -614,7 +614,7 @@ namespace Ps4_Pkg_Sender {
         private void AddItem(PkgInfo pkgInfo) {
             //Add To ListView
             ListViewItem listViewItem = new ListViewItem(pkgInfo.Title);
-            listViewItem.Tag = pkgInfo.FilePath;
+            listViewItem.Tag = pkgInfo.GetHashCode();
             listViewItem.SubItems.Add(Path.GetFileName(pkgInfo.FilePath));
             listViewItem.SubItems.Add(pkgInfo.Type.ToString());
             listViewItem.SubItems.Add(Enums.TaskType.Queued.ToString());
@@ -899,7 +899,7 @@ namespace Ps4_Pkg_Sender {
         private void ChangeItemStatus(Action<QueueItem> action) {
             foreach (ListViewItem item in this.listViewItemsQueue.SelectedItems) {
                 var q = ps4PkgList
-                    .Where(queueItem => queueItem.PkgInfo.FilePath == (string)item.Tag)
+                    .Where(queueItem => queueItem.PkgInfo.GetHashCode() == (int)item.Tag)
                     .FirstOrDefault();
                 if (q != null) {
                     action?.Invoke(q);
