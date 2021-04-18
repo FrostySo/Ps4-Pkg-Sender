@@ -1,7 +1,3 @@
-CodGmer update:
-
-Fixed to work with more recent node & npm
-
 # Ps4 Package Sender
 
 ![The Tool](https://frostyso.github.io/imgs/pkgsender.png)
@@ -62,3 +58,6 @@ Installing themes is bugged for multi-part themes. This is a problem with the pa
 [xXxTheDarkprogramerxXx](https://github.com/xXxTheDarkprogramerxXx) for the [PS4 Tools](https://github.com/xXxTheDarkprogramerxXx/PS4_Tools) library
 
 [flatz](https://github.com/flatz/) for the [ps4_remote_pkg_installer](https://github.com/flatz/ps4_remote_pkg_installer) api
+
+## Contributers
+[CodGmer](https://github.com/CodGmer) Fixed nodejs detection to work with the more recent node & npm versions
