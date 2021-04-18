@@ -1,3 +1,6 @@
+CodGmer update:
+
+Fixed to work with more recent node & npm
 
 # Ps4 Package Sender
 
