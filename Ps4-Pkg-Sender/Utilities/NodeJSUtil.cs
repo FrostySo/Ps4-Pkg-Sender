@@ -11,7 +11,7 @@ namespace Ps4_Pkg_Sender.Utilities {
         }
 
         public static bool IsNodeJsInstalled() {
-            return ExecuteCMD("npm", "Usage: npm <command>");
+            return ExecuteCMD("npm", "npm <command>");
         }
 
         public static bool IsHttpServerInstalled() {
