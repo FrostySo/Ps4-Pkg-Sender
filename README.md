@@ -13,7 +13,7 @@ It can send:
   - Patches
   - DLC's
   
-  [Download](https://mega.nz/folder/nItDhAoB#lTtL1qp2SZg1YQBlJdD5-A)
+  [Download](https://mega.nz/file/S85XxAgD#c7Ypw06k6js3hxkORWHPv9YLECAPIgVMIAfCxkFAztU)
   
   Feedback is apperciated. You can make an issue about any problems you have or if it works well (so I know).
 
