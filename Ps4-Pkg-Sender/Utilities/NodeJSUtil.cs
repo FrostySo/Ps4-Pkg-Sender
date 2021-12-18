@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Ps4_Pkg_Sender.Utilities {
     public static class NodeJSUtil {
@@ -15,7 +16,7 @@ namespace Ps4_Pkg_Sender.Utilities {
         }
 
         public static bool IsHttpServerInstalled() {
-            return ExecuteCMD("http-server -v", "v0.");
+            return ExecuteCMD("http-server -v", @"^v\d+.\d+.\d+");
         }
 
         public static bool InstallHttpServer() {
@@ -29,7 +30,7 @@ namespace Ps4_Pkg_Sender.Utilities {
             });
         }
 
-        private static bool ExecuteCMD(string argument,string expectedOutput, bool strict = false) {
+        private static bool ExecuteCMD(string argument,string expectedOutputRegexPattern, bool strict = false) {
             var cmdProcess = new Process();
             cmdProcess.StartInfo.FileName = "cmd.exe";
             cmdProcess.StartInfo.Arguments = $"/C {argument}";
@@ -40,11 +41,11 @@ namespace Ps4_Pkg_Sender.Utilities {
             cmdProcess.WaitForExit();
             var item = cmdProcess.StandardOutput.ReadToEnd();
             if (item == null) return false;
-            if (strict) {
-                return item.Equals(expectedOutput);
-            } else {
-                return item.ToLower().Contains(expectedOutput.ToLower());
+            var regexOptions = RegexOptions.Multiline | RegexOptions.CultureInvariant;
+            if (!strict) {
+                regexOptions |= RegexOptions.IgnoreCase;
             }
+            return Regex.IsMatch(item, expectedOutputRegexPattern, regexOptions);
         }
     }
 }
