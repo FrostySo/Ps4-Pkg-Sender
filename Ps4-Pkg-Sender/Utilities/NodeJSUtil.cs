@@ -20,7 +20,7 @@ namespace Ps4_Pkg_Sender.Utilities {
         }
 
         public static bool InstallHttpServer() {
-            return ExecuteCMD("npm install http-server -g", "+ http-server");
+            return ExecuteCMD("npm install http-server -g", @"added \d+ packages|\+ http-server");
         }
 
         public static void KillAllNodeJSInstances() {
