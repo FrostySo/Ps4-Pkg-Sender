@@ -536,10 +536,20 @@ namespace Ps4_Pkg_Sender {
             }
         }
 
-        private void listViewItemsQueue_MouseDown(object sender, MouseEventArgs e) {
+        private void listViewItemsQueue_MouseUp(object sender, MouseEventArgs e) {
             if (processing) return;
             if (e.Button == MouseButtons.Right) {
-                if (listViewItemsQueue.FocusedItem != null && listViewItemsQueue.FocusedItem.Bounds.Contains(e.Location)) {
+                bool focusedItem = false;
+                foreach (ListViewItem lvItem in listViewItemsQueue.SelectedItems) {
+                    if (lvItem.Focused) {
+                        if (lvItem.Bounds.Contains(e.Location)) {
+                            focusedItem = true;
+                        }
+                        break;
+                    }
+                }
+
+                if (focusedItem) {
                     contextMenuStripFocused.InvokeIfRequired(() => {
                         contextMenuStripFocused.Show(Cursor.Position);
                     });
@@ -551,10 +561,18 @@ namespace Ps4_Pkg_Sender {
             }
         }
 
+
         private void listViewItemsQueue_DragDrop(object sender, DragEventArgs e) {
             string[] filePaths = e.Data.GetData(DataFormats.FileDrop) as string[];
             if (filePaths != null && filePaths.Length > 0) {
                 AddAllValidItems(filePaths);
+
+                var jsonFiles = GetFilesForFileExtension(".json", filePaths, true);
+                foreach(var jsonFile in jsonFiles) {
+                    var queueItemList = ReadQueueItemJsonFile(jsonFile);
+                    if (queueItemList == null) continue;
+                    ImportQueueItems(queueItemList);
+                }
             }
         }
 
@@ -629,6 +647,20 @@ namespace Ps4_Pkg_Sender {
             listViewItem.SubItems.Add(Enums.TaskType.Queued.ToString());
             this.listViewItemsQueue.InvokeIfRequired(() => listViewItemsQueue.Items.Add(listViewItem));
             QueueItem queueItem = new QueueItem(listViewItem, listViewItemsQueue, pkgInfo);
+            ps4PkgList.Add(queueItem);
+        }
+
+        private void AddItem(QueueItemInfo queueItemInfo) {
+            //Add To ListView
+            var pkgInfo = queueItemInfo.PkgInfo;
+            ListViewItem listViewItem = new ListViewItem(pkgInfo.Title);
+            listViewItem.Tag = pkgInfo.GetHashCode();
+            listViewItem.SubItems.Add(Path.GetFileName(pkgInfo.FilePath));
+            listViewItem.SubItems.Add(pkgInfo.Type.ToString());
+            var queueInfoText = queueItemInfo.Uninstall ? $"Marked for uninstall" : Enums.TaskType.Queued.ToString();
+            listViewItem.SubItems.Add(queueInfoText);
+            this.listViewItemsQueue.InvokeIfRequired(() => listViewItemsQueue.Items.Add(listViewItem));
+            QueueItem queueItem = new QueueItem(listViewItem, listViewItemsQueue, queueItemInfo);
             ps4PkgList.Add(queueItem);
         }
 
@@ -737,18 +769,18 @@ namespace Ps4_Pkg_Sender {
 
                         if (!checkedPrereqs) {
 
-                            if (SanitizePathNeeded(queueItem.PkgInfo, out var renameInfo)) {
+                            if (SanitizePathNeeded(queueItem.Info.PkgInfo, out var renameInfo)) {
                                 queueItem.FileRenameInfo = renameInfo;
                                 if (!fileRenameService.Rename(renameInfo)) {
                                     throw new SkipItemException(Enums.TaskType.Failed, "Failed to sanitize file. Rename this file manually and re-add to the sender.");
                                 }
-                                queueItem.PkgInfo.FilePath = renameInfo.CurrentPath;
+                                queueItem.Info.PkgInfo.FilePath = renameInfo.CurrentPath;
                             }
                             checkedPrereqs = true;
                         }
 
                         if (!server.IsRunning) {
-                            server.StartServer(queueItem.PkgInfo);
+                            server.StartServer(queueItem.Info.PkgInfo);
                         }
 
                         var transferProgress = pkgTransfer.Transfer();
@@ -759,7 +791,7 @@ namespace Ps4_Pkg_Sender {
 
                         if (transferProgress.TransferStatus == Enums.TransferStatus.Completed) {
                             progressBar1.InvokeIfRequired(() => progressBar1.ResetProgressBar());
-                            queueItem.UpdateTask(Enums.TaskType.Finished, queueItem.Uninstall ? "Uninstalled" : "Installed", listViewItemsQueue);
+                            queueItem.UpdateTask(Enums.TaskType.Finished, queueItem.Info.Uninstall ? "Uninstalled" : "Installed", listViewItemsQueue);
                             server.StopServer();
                             
                             System.Threading.Thread.Sleep(1000); //Sleep some seconds so we don't piss the server off
@@ -820,7 +852,7 @@ namespace Ps4_Pkg_Sender {
         private void ChangeItemStatus(Action<QueueItem> action) {
             foreach (ListViewItem item in this.listViewItemsQueue.SelectedItems) {
                 var q = ps4PkgList
-                    .Where(queueItem => queueItem.PkgInfo.GetHashCode() == (int)item.Tag)
+                    .Where(queueItem => queueItem.Info.PkgInfo.GetHashCode() == (int)item.Tag)
                     .FirstOrDefault();
                 if (q != null) {
                     action?.Invoke(q);
@@ -830,14 +862,14 @@ namespace Ps4_Pkg_Sender {
         private void markForUninstallToolStripMenuItem_Click(object sender, EventArgs e) {
             ChangeItemStatus(q => {
                 q.UpdateTask(Enums.TaskType.Queued, "Marked for uninstall", this.listViewItemsQueue);
-                q.Uninstall = true;
+                q.Info.Uninstall = true;
             });
         }
 
         private void requeueItemToolStripMenuItem_Click(object sender, EventArgs e) {
             ChangeItemStatus(q => {
                 q.UpdateTask(Enums.TaskType.Queued, this.listViewItemsQueue);
-                q.Uninstall = false; 
+                q.Info.Uninstall = false; 
             });
         }
 
@@ -918,6 +950,64 @@ namespace Ps4_Pkg_Sender {
                 }
                 ipsList.Add(ipForm.IP);
                 File.WriteAllLines(Settings.CustomIPsFile, ipsList);
+            }
+        }
+
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (listViewItemsQueue.SelectedItems.Count == 0)
+                return;
+            var ps4QueueListAsDict = ps4PkgList
+                .ToDictionary(k => k.Info.PkgInfo.GetHashCode(), queueItem => queueItem);
+
+            var queueItemList = new List<QueueItemInfo>();
+            foreach (ListViewItem lvItem in listViewItemsQueue.SelectedItems) {
+                if(ps4QueueListAsDict.TryGetValue((int)lvItem.Tag,out var queueItem)) {
+                    queueItemList.Add(queueItem.Info);
+                }
+            }
+
+            var json = JsonConvert.SerializeObject(queueItemList, Formatting.Indented);
+            using (var saveFileDialog = new SaveFileDialog()) {
+                saveFileDialog.Filter = "json files (*.json)|*.json";
+                if (saveFileDialog.ShowDialog(this) == DialogResult.OK) {
+                    File.WriteAllText(saveFileDialog.FileName, json);
+                }
+            }
+        }
+
+       
+
+        private void importToolStripMenuItem_Click(object sender, EventArgs e) {
+            List<QueueItemInfo> queueItemList = null;
+            using (var openFileDialog = new OpenFileDialog()) {
+                openFileDialog.Filter = "json files (*.json)|*.json";
+                if(openFileDialog.ShowDialog(this) == DialogResult.OK) {
+                    try {
+                        queueItemList = JsonConvert.DeserializeObject<List<QueueItemInfo>>(File.ReadAllText(openFileDialog.FileName));
+                    } catch {
+                        MessageBox.Show(this, "Invalid json file format", $"File {openFileDialog.SafeFileName} Not Supported",MessageBoxButtons.OK);
+                    }
+                }
+            }
+            if (queueItemList == null) return;
+            ImportQueueItems(queueItemList);
+        }
+
+        List<QueueItemInfo> ReadQueueItemJsonFile(string filePath) {
+            try {
+                return JsonConvert.DeserializeObject<List<QueueItemInfo>>(File.ReadAllText(filePath));
+            } catch {
+                MessageBox.Show(this, "Invalid json file format", $"File {Path.GetFileName(filePath)} Not Supported", MessageBoxButtons.OK);
+                return null;
+            }
+        }
+
+
+        private void ImportQueueItems(IEnumerable<QueueItemInfo> queueItems) {
+            foreach (var item in queueItems) {
+                if (File.Exists(item.PkgInfo.FilePath)) {
+                    AddItem(item.PkgInfo);
+                }
             }
         }
     }

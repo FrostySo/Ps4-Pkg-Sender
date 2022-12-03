@@ -39,7 +39,7 @@ namespace Ps4_Pkg_Sender.Ps4 {
 
                 switch (queueItem.TaskType) {
                     case Enums.TaskType.Uninstalling:
-                    if (server.Uninstall(queueItem.PkgInfo)) {
+                    if (server.Uninstall(queueItem.Info.PkgInfo)) {
                         pkgTransferProgress.TransferStatus = Enums.TransferStatus.Completed;
                         taskId = 0;
                     }
@@ -47,7 +47,7 @@ namespace Ps4_Pkg_Sender.Ps4 {
 
                     case Enums.TaskType.Queued:
                     pkgTransferProgress.TransferStatus = Enums.TransferStatus.RequestingPkgSend;
-                    if (queueItem.Uninstall) {
+                    if (queueItem.Info.Uninstall) {
                         queueItem.UpdateTask(Enums.TaskType.Uninstalling);
                     } else {
                         queueItem.UpdateTask(Enums.TaskType.Sending);
@@ -59,7 +59,7 @@ namespace Ps4_Pkg_Sender.Ps4 {
 
                     if (taskId == 0) {
                         try {
-                            if (server.InitiateInstall(queueItem.PkgInfo, skipInstallCheck, out taskId)) {
+                            if (server.InitiateInstall(queueItem.Info.PkgInfo, skipInstallCheck, out taskId)) {
                                 if (taskId == TaskFinishedSC) { //no task id provided but already installed
                                     pkgTransferProgress.TransferStatus = Enums.TransferStatus.Completed;
                                 }

@@ -1,20 +1,29 @@
-﻿using Ps4_Pkg_Sender.Enums;
+﻿using Newtonsoft.Json;
+using Ps4_Pkg_Sender.Enums;
 using System.Collections.Generic;
 
 namespace Ps4_Pkg_Sender.Ps4 {
     public class PkgInfo : System.IComparable<PkgInfo>, IComparer<PkgInfo>{
 
+        [JsonProperty("Title")]
         public string Title { get; set; }
+
+        [JsonProperty("Type")]
         public PkgType Type { get; set; }
+
+        [JsonProperty("TitleID")]
         public string TitleID { get; set; }
 
+        [JsonProperty("ContentID")]
         public string ContentID { get; set; }
 
+        [JsonProperty("Version")]
         public string Version { get; set; }
 
+        [JsonProperty("FilePath")]
         public string FilePath { get; set; }
 
-        //public string[] PkgFiles { get; set; }
+        [JsonProperty("PatchSegments")]
         public string[] PatchSegments { get; set; }
 
         private string NameFromFile(string filePath) {

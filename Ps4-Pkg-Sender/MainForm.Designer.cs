@@ -32,6 +32,7 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panel1 = new System.Windows.Forms.Panel();
             this.labelProgressNotify = new System.Windows.Forms.Label();
+            this.progressBar1 = new Ps4_Pkg_Sender.Controls.CustomProgressBar();
             this.checkBoxRecursive = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.linkLabelAddServerIp = new System.Windows.Forms.LinkLabel();
@@ -56,10 +57,11 @@
             this.markForUninstallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTipInfo = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStripNoFocus = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
-            this.progressBar1 = new Ps4_Pkg_Sender.Controls.CustomProgressBar();
+            this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.contextMenuStripFocused.SuspendLayout();
@@ -96,7 +98,7 @@
             this.listViewItemsQueue.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.listViewItemsQueue_DrawSubItem);
             this.listViewItemsQueue.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewItemsQueue_DragDrop);
             this.listViewItemsQueue.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewItemsQueue_DragEnter);
-            this.listViewItemsQueue.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listViewItemsQueue_MouseDown);
+            this.listViewItemsQueue.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listViewItemsQueue_MouseUp);
             // 
             // columnHeader1
             // 
@@ -140,6 +142,16 @@
             this.labelProgressNotify.Name = "labelProgressNotify";
             this.labelProgressNotify.Size = new System.Drawing.Size(0, 16);
             this.labelProgressNotify.TabIndex = 15;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.progressBar1.ExtraText = null;
+            this.progressBar1.Location = new System.Drawing.Point(431, 67);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.SecondsRemaining = ((long)(0));
+            this.progressBar1.Size = new System.Drawing.Size(357, 23);
+            this.progressBar1.TabIndex = 14;
             // 
             // checkBoxRecursive
             // 
@@ -313,9 +325,10 @@
             this.markAsToolStripMenuItem,
             this.markForUninstallToolStripMenuItem,
             this.deleteToolStripMenuItem,
-            this.clearAllToolStripMenuItem});
+            this.clearAllToolStripMenuItem,
+            this.exportToolStripMenuItem});
             this.contextMenuStripFocused.Name = "contextMenuStrip1";
-            this.contextMenuStripFocused.Size = new System.Drawing.Size(171, 114);
+            this.contextMenuStripFocused.Size = new System.Drawing.Size(171, 136);
             // 
             // requeueItemToolStripMenuItem
             // 
@@ -384,12 +397,20 @@
             this.clearAllToolStripMenuItem.Text = "Clear All";
             this.clearAllToolStripMenuItem.Click += new System.EventHandler(this.clearAllToolStripMenuItem_Click);
             // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.exportToolStripMenuItem.Text = "Export";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
+            // 
             // contextMenuStripNoFocus
             // 
             this.contextMenuStripNoFocus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem4});
+            this.toolStripMenuItem4,
+            this.importToolStripMenuItem});
             this.contextMenuStripNoFocus.Name = "contextMenuStrip1";
-            this.contextMenuStripNoFocus.Size = new System.Drawing.Size(157, 26);
+            this.contextMenuStripNoFocus.Size = new System.Drawing.Size(157, 48);
             // 
             // toolStripMenuItem4
             // 
@@ -398,15 +419,12 @@
             this.toolStripMenuItem4.Text = "Add Package(s)";
             this.toolStripMenuItem4.Click += new System.EventHandler(this.toolStripMenuItem4_Click);
             // 
-            // progressBar1
+            // importToolStripMenuItem
             // 
-            this.progressBar1.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.progressBar1.ExtraText = null;
-            this.progressBar1.Location = new System.Drawing.Point(431, 67);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.SecondsRemaining = ((long)(0));
-            this.progressBar1.Size = new System.Drawing.Size(357, 23);
-            this.progressBar1.TabIndex = 14;
+            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.importToolStripMenuItem.Text = "Import";
+            this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -469,6 +487,8 @@
         private System.Windows.Forms.ToolStripMenuItem patchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gameToolStripMenuItem;
         private System.Windows.Forms.LinkLabel linkLabelAddServerIp;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
     }
 }
 

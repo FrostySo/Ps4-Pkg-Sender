@@ -100,6 +100,7 @@
     <Compile Include="Json\Ps4DataPayload.cs" />
     <Compile Include="Json\Ps4Progress.cs" />
     <Compile Include="Json\AppSettings.cs" />
+    <Compile Include="Models\QueueItemInfo.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
