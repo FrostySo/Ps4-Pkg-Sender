@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ps4_Pkg_Sender.Controls.Sorting;
 using Ps4_Pkg_Sender.Exceptions;
@@ -38,6 +38,8 @@ namespace Ps4_Pkg_Sender {
         BackgroundWorker queueBackgroundWorker;
 
         FileRenameService fileRenameService = new FileRenameService();
+
+        HashSet<int> QueueItemToIgnoreSet = new HashSet<int>();
 
         static Server server;
 
@@ -759,9 +761,14 @@ namespace Ps4_Pkg_Sender {
             stopwatch.Start();
             while (ps4PkgQueue.Count > 0) {
 
+                
                 this.labelProgressNotify.InvokeIfRequired(() =>labelProgressNotify.Text = $"Items left in queue {ps4PkgQueue.Count} of {totalQueue}");
                 var queueItem = ps4PkgQueue.Dequeue();
-
+                var hashCode = queueItem.Info.PkgInfo.GetHashCode();
+                if (QueueItemToIgnoreSet.Contains(hashCode)) {
+                    QueueItemToIgnoreSet.Remove(hashCode);
+                    continue;
+                }
                 try {
                     bool checkedPrereqs = false;
                     PkgTransfer pkgTransfer = new PkgTransfer(queueItem, queueBackgroundWorker, fileRenameService,server);
@@ -914,10 +921,19 @@ namespace Ps4_Pkg_Sender {
             listViewItemsQueue.BeginUpdate();
             //Delete from the reverse
             for (int i = listViewItemsQueue.Items.Count - 1; i >= 0; --i) {
-                if(listViewItemsQueue.Items[i].Selected)
+                if (listViewItemsQueue.Items[i].Selected) {
+                    QueueItemToIgnoreSet.Add((int)listViewItemsQueue.Items[i].Tag);
                     listViewItemsQueue.Items.RemoveAt(i);
+                }
             }
             listViewItemsQueue.EndUpdate();
+            for(int i= ps4PkgList.Count-1; i>=0; --i) {
+                var hashCode = ps4PkgList[i].Info.PkgInfo.GetHashCode();
+                if (QueueItemToIgnoreSet.Contains(hashCode)) {
+                    ps4PkgList.RemoveAt(i);
+                    QueueItemToIgnoreSet.Remove(hashCode);
+                }
+            }
         }
 
         private void listViewItemsQueue_ColumnClick(object sender, ColumnClickEventArgs e) {
