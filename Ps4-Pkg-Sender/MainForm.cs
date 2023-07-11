@@ -44,6 +44,7 @@ namespace Ps4_Pkg_Sender {
         static Server server;
 
         public struct Server {
+
             private static Random random = new Random();
 
             static readonly HashSet<int> NodeJsProcessSet = new HashSet<int>();
@@ -56,6 +57,10 @@ namespace Ps4_Pkg_Sender {
 
             public bool IsRunning { get; internal set; }
 
+            const string NodeJsHttpServerScript = "const {{ exec }} = require('child_process'); console.log('PID:', process.pid); const httpServerProcess = exec('http-server \\\"{0}\\\" -p {1}',); httpServerProcess.stdout.pipe(process.stdout); httpServerProcess.stderr.pipe(process.stderr);";
+
+            const string NodeJsPidPattern = @"PID: (\d+)";
+            
             private bool IsPortOpen(int port) {
                 IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
                 TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
@@ -79,20 +84,21 @@ namespace Ps4_Pkg_Sender {
             }
 
             public void StartServer(PkgInfo info) {
-
+              
                 foreach(var proc in NodeJSUtil.GetNodeProcesses()) {
                     NodeJsProcessSet.Add(proc.Id);
                 }
                 Logger.WriteLine("::StartServer - Starting server in directory " + Path.GetDirectoryName(info.FilePath),Logger.Type.StandardOutput);
                 var cmdProcess = new Process();
-                var path = Path.GetDirectoryName(info.FilePath);
+                var directoryPath = Path.GetDirectoryName(info.FilePath);
+                var directoryPathEscaped = Path.GetDirectoryName(info.FilePath).Replace(@"\", @"\\");
                 cmdProcess.StartInfo.FileName = "cmd.exe";
-                cmdProcess.StartInfo.Arguments = $"/C http-server \"{path}\" -p {GetNextBestPort()}";
+                cmdProcess.StartInfo.Arguments = $"/C node -e \"{String.Format(NodeJsHttpServerScript, directoryPathEscaped, GetNextBestPort())}\"";
                 cmdProcess.StartInfo.UseShellExecute = false;
                 cmdProcess.StartInfo.CreateNoWindow = true;
                 cmdProcess.StartInfo.RedirectStandardOutput = true;
                 cmdProcess.StartInfo.RedirectStandardError = true;
-                if (Directory.GetLogicalDrives().Contains(path)) {
+                if (Directory.GetLogicalDrives().Contains(directoryPath)) {
                     cmdProcess.StartInfo.Arguments = cmdProcess.StartInfo.Arguments.Replace(@"\", @"\\");
                 }
                 cmdProcess.Start();
@@ -109,10 +115,10 @@ namespace Ps4_Pkg_Sender {
                         }
                     } catch (Exception e) {
 
-                    }
-                    System.Threading.Thread.Sleep(100);
-                }
-
+                var cmd = cmdProcess;
+                cmd.Exited += Cmd_Exited;
+                cmd.EnableRaisingEvents = true;
+                while (cmd.Handle == IntPtr.Zero) {
                 var temp = cmdProcess;
                 while (temp.Handle == IntPtr.Zero) {
                     System.Threading.Thread.Sleep(100);
@@ -126,28 +132,54 @@ namespace Ps4_Pkg_Sender {
                 //Just gotta hope this works well
                 //Otherwise we'll be stuck here forever :( 
                 var stdout = "";
-                while (stdout != null) {
-                    stdout = temp.StandardOutput.ReadLine();
-                    if (stdout != null) {
-                        if (stdout.ToLower().Contains("starting up http-server, serving")) {
-                            IsRunning = true;
-                            break;
+                bool pidFound = false;
+                while ((stdout = cmd.StandardOutput.ReadLine()) != null) {
+
+                    if (!pidFound) {
+                        var match = Regex.Match(stdout, NodeJsPidPattern);
+                        if (match.Success) {
+                            if (int.TryParse(match.Groups[1].Value, out var pid)) {
+                                currentProcessPid = pid;
+                                pidFound = true;
+                                var process = Process.GetProcessById(currentProcessPid);
+                                process.EnableRaisingEvents = true;
+                                process.Exited += Process_Exited;
+                            }
                         }
-                        Logger.WriteLine(stdout, Logger.Type.StandardOutput);
+                    }
+
+                    if (stdout.ToLower().Contains("starting up http-server, serving")) {
+                        IsRunning = true;
+                        break;
+                    }
+                    Logger.WriteLine(stdout, Logger.Type.StandardOutput);
                     }
                 }
 
-                if (!IsRunning && temp.HasExited) {
-                    var strdErr = temp.StandardError.ReadToEnd();
+                if (!IsRunning && cmd.HasExited) {
+                    var strdErr = cmd.StandardError.ReadToEnd();
                     if (strdErr.Contains("EADDRINUSE")) {
                         throw new ServerInitializationException("Address already in use");
                     }
                 }
             }
 
+            private void Process_Exited(object sender, EventArgs e) {
+                IsRunning = false;
+            }
+
+            private void Cmd_Exited(object sender, EventArgs e) {
+                IsRunning = false;
+                var process = sender as Process;
+                if(process != null) {
+                    var stdOut = process.StandardOutput.ReadToEnd();
+                    Logger.WriteLine($"Cmd::Exited:Out -> {stdOut}", Logger.Type.StandardOutput);
+                }
+            }
+
             private void KillProcess(int pid) {
                 try {
-                    var process = Process.GetProcessById(pid);
+                    ProcessUtil.KillProcessAndChildren(pid);
                     if (process != null && !process.HasExited) {
                         process.Kill();
                         process.WaitForExit();

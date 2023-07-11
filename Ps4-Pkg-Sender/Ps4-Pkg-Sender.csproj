@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -67,6 +67,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -121,6 +122,7 @@
     <Compile Include="Utilities\HttpUtil.cs" />
     <Compile Include="Utilities\NodeJSUtil.cs" />
     <Compile Include="Utilities\PkgTypeComparator.cs" />
+    <Compile Include="Utilities\ProcessUtil.cs" />
     <Compile Include="Utilities\TimeFormatUtil.cs" />
     <Compile Include="WinApi\Win32Api.cs" />
     <EmbeddedResource Include="AddServerIpForm.resx">
