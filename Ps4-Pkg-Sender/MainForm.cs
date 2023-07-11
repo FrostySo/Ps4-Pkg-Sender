@@ -1052,10 +1052,18 @@ namespace Ps4_Pkg_Sender {
 
 
         private void ImportQueueItems(IEnumerable<QueueItemInfo> queueItems) {
+            var skippedItems = new List<string>();
             foreach (var item in queueItems) {
+
                 if (File.Exists(item.PkgInfo.FilePath)) {
                     AddItem(item.PkgInfo);
+                } else {
+                    skippedItems.Add(item.PkgInfo.Title);
                 }
+            }
+
+            if(skippedItems.Count > 0) {
+                MessageBox.Show("The Following Items have been skipped:\n" + string.Join(Environment.NewLine, skippedItems) + "\n\nReason: File not found");
             }
         }
     }
