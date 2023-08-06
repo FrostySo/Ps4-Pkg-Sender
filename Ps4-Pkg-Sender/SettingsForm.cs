@@ -1,4 +1,4 @@
-﻿using Ps4_Pkg_Sender.UI;
+using Ps4_Pkg_Sender.UI;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,6 +9,9 @@ namespace Ps4_Pkg_Sender {
         public SettingsForm(MainForm mainForm) {
             this._mainForm = mainForm;
             InitializeComponent();
+            this.flatNumericUpDownCheckDelay.Value = MainForm.Settings.ProgressCheckDelay;
+            this.checkBoxFinishedQueueSound.Checked= MainForm.Settings.SoundSettings.PlayQueueFinishSound;
+            this.checkBoxPlayOnError.Checked= MainForm.Settings.SoundSettings.PlaySoundOnError;
         }
 
         private void SettingsForm_Load(object sender, EventArgs e) {
@@ -29,7 +32,7 @@ namespace Ps4_Pkg_Sender {
         }
 
         private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e) {
-            MainForm.Settings.SoundSettings.PlayErrorSound = checkBoxPlayOnError.Checked;
+            MainForm.Settings.SoundSettings.PlaySoundOnError = checkBoxPlayOnError.Checked;
             MainForm.Settings.SoundSettings.PlayQueueFinishSound = checkBoxFinishedQueueSound.Checked;
             _mainForm.SaveSettings();
         }

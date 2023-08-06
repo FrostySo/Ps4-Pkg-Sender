@@ -143,6 +143,7 @@
     <Compile Include="Json\Ps4DataPayload.cs" />
     <Compile Include="Json\Ps4Progress.cs" />
     <Compile Include="Json\AppSettings.cs" />
+    <Compile Include="Json\SoundSettings.cs" />
     <Compile Include="Json\ThemeSettings.cs" />
     <Compile Include="Models\QueueItemInfo.cs" />
     <Compile Include="MainForm.cs">
@@ -218,6 +219,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="delivery.ico" />
+    <None Include="Resources\Error.wav" />
+    <None Include="Resources\Complete.wav" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">

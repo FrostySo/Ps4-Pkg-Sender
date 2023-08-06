@@ -28,9 +28,10 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.checkBoxSkipInstallCheck = new System.Windows.Forms.CheckBox();
             this.labelProgressNotify = new System.Windows.Forms.Label();
+            this.progressBar1 = new Ps4_Pkg_Sender.Controls.CustomProgressBar();
             this.checkBoxRecursive = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.labelSettings = new System.Windows.Forms.Label();
+            this.labelSettings = new System.Windows.Forms.LinkLabel();
             this.linkLabelAddServerIp = new System.Windows.Forms.LinkLabel();
             this.labelCheckDelay = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -62,7 +63,6 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.progressBar1 = new Ps4_Pkg_Sender.Controls.CustomProgressBar();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.contextMenuStripFocused.SuspendLayout();
@@ -108,6 +108,18 @@
             this.labelProgressNotify.Tag = "Big";
             this.labelProgressNotify.Text = "All Done!";
             // 
+            // progressBar1
+            // 
+            this.progressBar1.BackColor = System.Drawing.Color.Gray;
+            this.progressBar1.ExtraText = null;
+            this.progressBar1.FontColor = System.Drawing.Color.White;
+            this.progressBar1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(116)))), ((int)(((byte)(12)))));
+            this.progressBar1.Location = new System.Drawing.Point(431, 83);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.SecondsRemaining = ((long)(0));
+            this.progressBar1.Size = new System.Drawing.Size(357, 23);
+            this.progressBar1.TabIndex = 14;
+            // 
             // checkBoxRecursive
             // 
             this.checkBoxRecursive.AutoSize = true;
@@ -145,13 +157,17 @@
             // 
             // labelSettings
             // 
+            this.labelSettings.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(116)))), ((int)(((byte)(12)))));
             this.labelSettings.AutoSize = true;
+            this.labelSettings.LinkColor = System.Drawing.Color.White;
             this.labelSettings.Location = new System.Drawing.Point(6, 82);
             this.labelSettings.Name = "labelSettings";
             this.labelSettings.Size = new System.Drawing.Size(59, 15);
             this.labelSettings.TabIndex = 20;
+            this.labelSettings.TabStop = true;
             this.labelSettings.Tag = "Small";
             this.labelSettings.Text = "Settings";
+            this.labelSettings.VisitedLinkColor = System.Drawing.SystemColors.ButtonHighlight;
             this.labelSettings.Click += new System.EventHandler(this.labelSettings_Click);
             // 
             // linkLabelAddServerIp
@@ -436,18 +452,6 @@
             this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader4.Width = 135;
             // 
-            // progressBar1
-            // 
-            this.progressBar1.BackColor = System.Drawing.Color.Gray;
-            this.progressBar1.ExtraText = null;
-            this.progressBar1.FontColor = System.Drawing.Color.White;
-            this.progressBar1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(116)))), ((int)(((byte)(12)))));
-            this.progressBar1.Location = new System.Drawing.Point(431, 83);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.SecondsRemaining = ((long)(0));
-            this.progressBar1.Size = new System.Drawing.Size(357, 23);
-            this.progressBar1.TabIndex = 14;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -510,7 +514,7 @@
         private System.Windows.Forms.LinkLabel linkLabelAddServerIp;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
-        private System.Windows.Forms.Label labelSettings;
+        private System.Windows.Forms.LinkLabel labelSettings;
         private System.Windows.Forms.CheckBox checkBoxSkipInstallCheck;
     }
 }

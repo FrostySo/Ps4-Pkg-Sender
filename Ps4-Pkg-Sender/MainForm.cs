@@ -84,6 +84,7 @@ namespace Ps4_Pkg_Sender {
             settings.RecursiveSearch = checkBoxRecursive.Checked;
             settings.ProgressCheckDelay = Settings.ProgressCheckDelay;
             settings.SkipInstallCheck = checkBoxSkipInstallCheck.Checked;
+            settings.SoundSettings = Settings.SoundSettings;
             File.WriteAllText("settings.json", JsonConvert.SerializeObject(settings, Formatting.Indented));
             labelCheckDelay.Text = $"Check Delay:  {settings.ProgressCheckDelay}s";
         }
@@ -526,6 +527,7 @@ namespace Ps4_Pkg_Sender {
             int totalQueue = ps4PkgQueue.Count;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
+            bool playErrorSound = false;
             while (ps4PkgQueue.Count > 0) {
 
                 
@@ -574,9 +576,19 @@ namespace Ps4_Pkg_Sender {
                     //Skip Item
                     queueItem.UpdateTask(ex.TaskType, ex.Message, listViewItemsQueue);
                     server.StopServer();
-                }catch(ServerInitializationException ex) {
+                    playErrorSound = true;
+                } catch (ServerInitializationException ex) {
                     queueItem.UpdateTask(Enums.TaskType.Failed,$"Failed to initialize server - {ex.Message}", listViewItemsQueue);
+                    playErrorSound = true;
                 }
+
+                if (playErrorSound) {
+                    if (Settings.SoundSettings.PlaySoundOnError) {
+                        Json.SoundSettings.PlayErrorSound();
+                    }
+                    playErrorSound = false;
+                }
+              
 
                 if (queueItem.FileRenameInfo != null) {
                     //Queue the file to the service, so we can rename it to the old filename
@@ -585,6 +597,9 @@ namespace Ps4_Pkg_Sender {
             }
 
             if (!queueBackgroundWorker.CancellationPending) {
+                if (Settings.SoundSettings.PlayQueueFinishSound) {
+                    Json.SoundSettings.PlayCompleteSound();
+                }
                 this.labelProgressNotify.InvokeIfRequired(() => labelProgressNotify.Text = $"All Done!");
                 this.InvokeIfRequired(() => buttonProcessQueue_Click(null, null));
             } else {
