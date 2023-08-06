@@ -154,7 +154,7 @@ namespace Ps4_Pkg_Sender {
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
             SaveSettings();
-            if(!server.Equals(default(Server))){
+            if(server != null){
                 server.StopServer();
             }
         }
