@@ -1,8 +1,9 @@
-using Ps4_Pkg_Sender.Exceptions;
+﻿using Ps4_Pkg_Sender.Exceptions;
 using Ps4_Pkg_Sender.Extensions;
 using Ps4_Pkg_Sender.Properties;
 using Ps4_Pkg_Sender.Services;
 using Ps4_Pkg_Sender.Utilities;
+using System;
 using System.Diagnostics;
 using System.Net;
 using System.Windows.Forms;
@@ -33,6 +34,10 @@ namespace Ps4_Pkg_Sender.Ps4 {
 
         const long TaskFinishedSC = 0xAFFFFFF;
 
+        private int suspectedStuckCount = 0;
+
+        long previousSecondsLeft;
+
         public PkgTransferProgress Transfer() {
             var pkgTransferProgress = new PkgTransferProgress();
             try {
@@ -49,6 +54,7 @@ namespace Ps4_Pkg_Sender.Ps4 {
                     break;
 
                     case Enums.TaskType.Queued:
+                    suspectedStuckCount = 0;
                     pkgTransferProgress.TransferStatus = Enums.TransferStatus.RequestingPkgSend;
                     if (queueItem.Info.Uninstall) {
                         queueItem.UpdateTask(Enums.TaskType.Uninstalling);
@@ -58,6 +64,10 @@ namespace Ps4_Pkg_Sender.Ps4 {
                     break;
 
                     case Enums.TaskType.Sending:
+                        if (!server.IsRunning) {
+                            server.StartServer(queueItem.Info.PkgInfo);
+                        }
+
                     pkgTransferProgress.TransferStatus = Enums.TransferStatus.InProgress;
 
                     if (taskId == 0) {
@@ -123,6 +133,19 @@ namespace Ps4_Pkg_Sender.Ps4 {
                             if (total >= 100 || progress.ExceedsTotalLength()) {
                                 pkgTransferProgress.TransferStatus = Enums.TransferStatus.Completed;
                                 return pkgTransferProgress;
+                            }
+
+                            if(suspectedStuckCount >= 2) {
+                                Console.WriteLine("Prev:" + previousSecondsLeft + "curr: " + progress.SecondsLeft);
+                                if(previousSecondsLeft-progress.SecondsLeft == 0) {
+                                    server.RestartServer(queueItem.Info.PkgInfo);
+                                    suspectedStuckCount = 0;
+                                }
+                            }
+
+                            if(checkedFirstProgress && TimeSpan.FromSeconds(progress.SecondsLeft).TotalDays > 100) {
+                                ++suspectedStuckCount;
+                                previousSecondsLeft = progress.SecondsLeft;
                             }
                             pkgTransferProgress.DataTrasmittedProgress = progress;
                             stopwatch.Restart();

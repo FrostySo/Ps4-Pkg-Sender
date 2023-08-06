@@ -158,6 +158,7 @@
     <Compile Include="Ps4\PkgInfo.cs" />
     <Compile Include="Ps4\PkgTransfer.cs" />
     <Compile Include="Ps4\PkgTransferProgress.cs" />
+    <Compile Include="Ps4\Server.cs" />
     <Compile Include="QueueItem.cs" />
     <Compile Include="Services\FileRenameService.cs" />
     <Compile Include="Services\Service.cs" />

@@ -1,4 +1,4 @@
-namespace Ps4_Pkg_Sender {
+﻿namespace Ps4_Pkg_Sender {
     partial class MainForm {
         /// <summary>
         /// Required designer variable.
@@ -458,7 +458,7 @@ namespace Ps4_Pkg_Sender {
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
-            this.Text = "Ps4 Pkg Sender V1.07";
+            this.Text = " ";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Resize += new System.EventHandler(this.MainForm_Resize);

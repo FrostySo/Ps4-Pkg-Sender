@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ps4_Pkg_Sender.Controls.Sorting;
 using Ps4_Pkg_Sender.Exceptions;
@@ -42,264 +42,11 @@ namespace Ps4_Pkg_Sender {
 
         HashSet<int> QueueItemToIgnoreSet = new HashSet<int>();
 
+ 
+
         static Server server;
 
-        public struct Server {
-
-            private static Random random = new Random();
-
-            static readonly HashSet<int> NodeJsProcessSet = new HashSet<int>();
-
-            int currentProcessPid;
-
-            public string PS4IP { get; set; }
-            public string ServerIp { get; set; }
-            public static int ServerPort { get; set; } = 8080;
-
-            public bool IsRunning { get; internal set; }
-
-            const string NodeJsHttpServerScript = "const {{ exec }} = require('child_process'); console.log('PID:', process.pid); const httpServerProcess = exec('http-server \\\"{0}\\\" -p {1}',); httpServerProcess.stdout.pipe(process.stdout); httpServerProcess.stderr.pipe(process.stderr);";
-
-            const string NodeJsPidPattern = @"PID: (\d+)";
-            
-            private bool IsPortOpen(int port) {
-                IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
-                TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
-                foreach (TcpConnectionInformation tcpi in tcpConnInfoArray) {
-                    if (tcpi.LocalEndPoint.Port == port) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            private int GetRandomPort() {
-                return random.Next(29170, 29998);
-            }
-
-            private int GetNextBestPort() {
-                if (!IsPortOpen(ServerPort)) {
-                    ServerPort = GetRandomPort();
-                }
-                return ServerPort;
-            }
-
-            public void StartServer(PkgInfo info) {
-              
-                foreach(var proc in NodeJSUtil.GetNodeProcesses()) {
-                    NodeJsProcessSet.Add(proc.Id);
-                }
-                Logger.WriteLine("::StartServer - Starting server in directory " + Path.GetDirectoryName(info.FilePath),Logger.Type.StandardOutput);
-                var cmdProcess = new Process();
-                var directoryPath = Path.GetDirectoryName(info.FilePath);
-                var directoryPathEscaped = Path.GetDirectoryName(info.FilePath).Replace(@"\", @"\\");
-                cmdProcess.StartInfo.FileName = "cmd.exe";
-                cmdProcess.StartInfo.Arguments = $"/C node -e \"{String.Format(NodeJsHttpServerScript, directoryPathEscaped, GetNextBestPort())}\"";
-                cmdProcess.StartInfo.UseShellExecute = false;
-                cmdProcess.StartInfo.CreateNoWindow = true;
-                cmdProcess.StartInfo.RedirectStandardOutput = true;
-                cmdProcess.StartInfo.RedirectStandardError = true;
-                if (Directory.GetLogicalDrives().Contains(directoryPath)) {
-                    cmdProcess.StartInfo.Arguments = cmdProcess.StartInfo.Arguments.Replace(@"\", @"\\");
-                }
-                cmdProcess.Start();
-
-                //Assumption will be that it should always be found
-                currentProcessPid = 0;
-                while (currentProcessPid == 0) {
-                    try {
-                        var nodeProcesses = NodeJSUtil.GetNodeProcesses().ToList();
-                        if (nodeProcesses.Count > 0) {
-                            currentProcessPid = nodeProcesses
-                                                    .Find(proc => !NodeJsProcessSet.Contains(proc.Id))
-                                                    .Id;
-                        }
-                    } catch (Exception e) {
-
-                var cmd = cmdProcess;
-                cmd.Exited += Cmd_Exited;
-                cmd.EnableRaisingEvents = true;
-                while (cmd.Handle == IntPtr.Zero) {
-                var temp = cmdProcess;
-                while (temp.Handle == IntPtr.Zero) {
-                    System.Threading.Thread.Sleep(100);
-                }
-
-                Stopwatch stopwatchTimeoutTracker = new Stopwatch();
-                stopwatchTimeoutTracker.Start();
-                IsRunning = false;
-                
-                //Couldn't think of a better solution
-                //Just gotta hope this works well
-                //Otherwise we'll be stuck here forever :( 
-                var stdout = "";
-                bool pidFound = false;
-                while ((stdout = cmd.StandardOutput.ReadLine()) != null) {
-
-                    if (!pidFound) {
-                        var match = Regex.Match(stdout, NodeJsPidPattern);
-                        if (match.Success) {
-                            if (int.TryParse(match.Groups[1].Value, out var pid)) {
-                                currentProcessPid = pid;
-                                pidFound = true;
-                                var process = Process.GetProcessById(currentProcessPid);
-                                process.EnableRaisingEvents = true;
-                                process.Exited += Process_Exited;
-                            }
-                        }
-                    }
-
-                    if (stdout.ToLower().Contains("starting up http-server, serving")) {
-                        IsRunning = true;
-                        break;
-                    }
-                    Logger.WriteLine(stdout, Logger.Type.StandardOutput);
-                    }
-                }
-
-                if (!IsRunning && cmd.HasExited) {
-                    var strdErr = cmd.StandardError.ReadToEnd();
-                    if (strdErr.Contains("EADDRINUSE")) {
-                        throw new ServerInitializationException("Address already in use");
-                    }
-                }
-            }
-
-            private void Process_Exited(object sender, EventArgs e) {
-                IsRunning = false;
-            }
-
-            private void Cmd_Exited(object sender, EventArgs e) {
-                IsRunning = false;
-                var process = sender as Process;
-                if(process != null) {
-                    var stdOut = process.StandardOutput.ReadToEnd();
-                    Logger.WriteLine($"Cmd::Exited:Out -> {stdOut}", Logger.Type.StandardOutput);
-                }
-            }
-
-            private void KillProcess(int pid) {
-                try {
-                    ProcessUtil.KillProcessAndChildren(pid);
-                    if (process != null && !process.HasExited) {
-                        process.Kill();
-                        process.WaitForExit();
-                    }
-                } catch {
-
-                }
-            }
-
-            public void StopServer() {
-                Logger.WriteLine("Killed Old Server Process",Logger.Type.DebugOutput);
-                KillProcess(currentProcessPid);
-                IsRunning = false;
-            }
-
-            public DataTrasmittedProgress GetInstallProgress(long taskID) {
-                if (taskID == 0) return null;
-                var response = HttpUtil.Post($"http://{PS4IP}:12800/api/get_task_progress", $"{{\"task_id\":{taskID}}}");
-                Logger.WriteLine("::GetInstallProgress - " + response,Logger.Type.StandardOutput);
-                var progress = JsonConvert.DeserializeObject<Json.Ps4Progress>(response);
-                return new DataTrasmittedProgress(progress.LengthTotal,progress.TransferredTotal, progress.RestSecTotal);
-            }
-
-
-            private int RecoverTaskID(PkgInfo pkgInfo) {
-                var url = $"http://{PS4IP}:12800/api/find_task";
-                var json = $"{{\"content_id\":\"{pkgInfo.ContentID}\", \"sub_type\":{(int)pkgInfo.Type}}}";
-                var response = HttpUtil.Post(url, json);
-                Logger.WriteLine("::RecoverTaskID - " + response,Logger.Type.StandardOutput);
-                if (response.Contains("task_id")) {
-                    return int.Parse(JToken.Parse(response)["task_id"].ToString());
-                }
-                if (response.Contains("error_code")) {
-                    throw new RPIErrorThrownException(long.Parse(JToken.Parse(response)["error_code"].ToString()));
-                }
-                return -1;
-            }
-
-            public bool TryRecoverTaskID(PkgInfo pkgInfo, out long id) {
-                id = -1;
-                id = RecoverTaskID(pkgInfo);
-                if (id != -1) {
-                    return true;
-                }
-                //Because it checks the title id instead of content id
-                //this will return true if the game is installed
-                //there is no way of knowing the patch is installed accurately
-                //So we just return false and assume it's not.
-                if (pkgInfo.Type == Enums.PkgType.Patch || pkgInfo.Type == Enums.PkgType.Additional_Content) {
-                    return false;
-                }
-                var url = $"http://{PS4IP}:12800/api/is_exists";
-                var json = $"{{\"title_id\":\"{pkgInfo.TitleID}\"}}";
-                var response = HttpUtil.Post(url,json);
-                if (response.Contains("task_id")) {
-                    id = int.Parse(JToken.Parse(response)["task_id"].ToString());
-                    return true;
-                }
-                Logger.WriteLine("::GetTaskID.AppExists - " + response,Logger.Type.StandardOutput);
-
-                //App is already installed, usually a task ID comes with it but I'm not certain 
-                //If this happens with DLC/Themes
-                //Better safe than sorry
-                return response.Contains("\"exists\": \"true\""); 
-            }
-
-            public bool InitiateInstall(PkgInfo pkgInfo, bool skipInstallCheck, out long id) {
-                id = 0;
-                if (!skipInstallCheck && TryRecoverTaskID(pkgInfo, out id)) {
-                    if (id == -1) { //App is already installed and no id was returned
-                        id = 0xAFFFFFF; //The flag we will use to determine if it is installed
-                    }
-                    return true;
-                }
-                var response = HttpUtil.Post($"http://{PS4IP}:12800/api/install",
-                HttpUtil.GetInstallJson(pkgInfo.GetFilePaths(), ServerIp, ServerPort));
-                //{ "status": "fail", "error_code": 0x80990004 }
-                if (response.Contains("task_id")) {
-                    id = long.Parse(JToken.Parse(response)["task_id"].ToString());
-                    return true;
-                }
-                if (response.Contains("{ \"status\": \"fail\"")) {
-                    throw new RPIErrorThrownException(long.Parse(JToken.Parse(response)["error_code"].ToString()));
-                }
-                return false;
-            }
-
-            public bool Uninstall(PkgInfo pkgInfo) {
-                var url = $"http://{PS4IP}:12800/api/uninstall_";
-                var json = "";
-                switch (pkgInfo.Type) {
-                    case Enums.PkgType.Game:
-                        url += "game";
-                        json = $"{{\"title_id\":\"{pkgInfo.TitleID}\"}}";
-                        break;
-
-                    case Enums.PkgType.Patch:
-                    json = $"{{\"title_id\":\"{pkgInfo.TitleID}\"}}";
-                    url += "patch";
-                    break;
-
-                    case Enums.PkgType.Additional_Content:
-                        url += "ac";
-                        json = $"{{\"content_id\":\"{pkgInfo.ContentID}\"}}";
-                    break;
-
-                    case Enums.PkgType.Addon_Theme:
-                        url += "theme";
-                        json = $"{{\"content_id\":\"{pkgInfo.ContentID}\"}}";
-                    break;
-                }
-
-                var response = HttpUtil.Post(url,json);
-                if (response.Contains("success")) {
-                    return true;
-                }
-                return false;
-            }
-        }
+      
 
         private Server GetServerDetails() {
             server = new Server();
@@ -806,12 +553,8 @@ namespace Ps4_Pkg_Sender {
                             checkedPrereqs = true;
                         }
 
-                        if (!server.IsRunning) {
-                            server.StartServer(queueItem.Info.PkgInfo);
-                        }
-
                         var transferProgress = pkgTransfer.Transfer();
-
+                      
                         if (transferProgress.TimeLeft > 0) {
                             this.progressBar1.InvokeIfRequired(() => progressBar1.ExtraText = $" ({transferProgress.TimeLeft})");
                         }
@@ -820,7 +563,6 @@ namespace Ps4_Pkg_Sender {
                             progressBar1.InvokeIfRequired(() => progressBar1.ResetProgressBar());
                             queueItem.UpdateTask(Enums.TaskType.Finished, queueItem.Info.Uninstall ? "Uninstalled" : "Installed", listViewItemsQueue);
                             server.StopServer();
-                            
                             System.Threading.Thread.Sleep(1000); //Sleep some seconds so we don't piss the server off
                             break;
                         }
