@@ -71,6 +71,7 @@ namespace Ps4_Pkg_Sender {
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.checkBoxSkipInstallCheck);
             this.panel1.Controls.Add(this.labelProgressNotify);
             this.panel1.Controls.Add(this.progressBar1);
             this.panel1.Controls.Add(this.checkBoxRecursive);
@@ -81,6 +82,19 @@ namespace Ps4_Pkg_Sender {
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(800, 117);
             this.panel1.TabIndex = 1;
+            // 
+            // checkBoxSkipInstallCheck
+            // 
+            this.checkBoxSkipInstallCheck.AutoSize = true;
+            this.checkBoxSkipInstallCheck.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.checkBoxSkipInstallCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBoxSkipInstallCheck.ForeColor = System.Drawing.Color.White;
+            this.checkBoxSkipInstallCheck.Location = new System.Drawing.Point(431, 38);
+            this.checkBoxSkipInstallCheck.Name = "checkBoxSkipInstallCheck";
+            this.checkBoxSkipInstallCheck.Size = new System.Drawing.Size(129, 20);
+            this.checkBoxSkipInstallCheck.TabIndex = 16;
+            this.checkBoxSkipInstallCheck.Text = "Skip Install Check";
+            this.checkBoxSkipInstallCheck.UseVisualStyleBackColor = true;
             // 
             // labelProgressNotify
             // 
@@ -497,6 +511,7 @@ namespace Ps4_Pkg_Sender {
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
         private System.Windows.Forms.Label labelSettings;
+        private System.Windows.Forms.CheckBox checkBoxSkipInstallCheck;
     }
 }
 

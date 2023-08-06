@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 namespace Ps4_Pkg_Sender.Json {
     public class AppSettings {
@@ -8,6 +8,9 @@ namespace Ps4_Pkg_Sender.Json {
         public string Ps4IP { get; set; }
         [JsonProperty("RecursiveSearch")]
         public bool RecursiveSearch { get; set; }
+
+        [JsonProperty("SkipInstallCheck")]
+        public bool SkipInstallCheck { get; set; }
 
         [JsonProperty("ProgressCheckDelay")]
         public int ProgressCheckDelay { get; set; } = 10;

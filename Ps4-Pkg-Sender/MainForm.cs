@@ -323,12 +323,13 @@ namespace Ps4_Pkg_Sender {
             fileRenameService.StartService();
         }
 
-        private void SaveSettings() {
+        public void SaveSettings() {
             var settings = new Json.AppSettings();
             settings.Ps4IP = textBoxPS4IP.Text;
             settings.ServerIP = comboBoxServerIP.SelectedItem.ToString();
             settings.RecursiveSearch = checkBoxRecursive.Checked;
             settings.ProgressCheckDelay = Settings.ProgressCheckDelay;
+            settings.SkipInstallCheck = checkBoxSkipInstallCheck.Checked;
             File.WriteAllText("settings.json", JsonConvert.SerializeObject(settings, Formatting.Indented));
         }
 
@@ -343,6 +344,7 @@ namespace Ps4_Pkg_Sender {
             }
             this.textBoxPS4IP.Text = Settings.Ps4IP;
             checkBoxRecursive.Checked = Settings.RecursiveSearch;
+            checkBoxSkipInstallCheck.Checked = Settings.SkipInstallCheck;
         }
 
         private void CheckPreRequesites() {

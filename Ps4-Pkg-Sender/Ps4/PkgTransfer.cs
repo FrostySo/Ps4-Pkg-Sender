@@ -1,4 +1,4 @@
-﻿using Ps4_Pkg_Sender.Exceptions;
+using Ps4_Pkg_Sender.Exceptions;
 using Ps4_Pkg_Sender.Extensions;
 using Ps4_Pkg_Sender.Properties;
 using Ps4_Pkg_Sender.Services;
@@ -36,6 +36,9 @@ namespace Ps4_Pkg_Sender.Ps4 {
         public PkgTransferProgress Transfer() {
             var pkgTransferProgress = new PkgTransferProgress();
             try {
+                if (MainForm.Settings.SkipInstallCheck) {
+                    skipInstallCheck = true;
+                }
 
                 switch (queueItem.TaskType) {
                     case Enums.TaskType.Uninstalling:
