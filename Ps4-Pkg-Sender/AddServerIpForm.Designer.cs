@@ -46,6 +46,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(88, 20);
             this.label1.TabIndex = 4;
+            this.label1.Tag = "Big";
             this.label1.Text = "Server IP:";
             // 
             // buttonAddIp
@@ -76,6 +77,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "AddServerIpForm";
             this.Text = "AddServerIpForm";
+            this.Load += new System.EventHandler(this.AddServerIpForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

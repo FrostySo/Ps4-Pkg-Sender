@@ -6,6 +6,7 @@ using Ps4_Pkg_Sender.Extensions;
 using Ps4_Pkg_Sender.Models;
 using Ps4_Pkg_Sender.Ps4;
 using Ps4_Pkg_Sender.Services;
+using Ps4_Pkg_Sender.UI;
 using Ps4_Pkg_Sender.Utilities;
 using Ps4_Pkg_Sender.WinApi;
 using System;
@@ -309,6 +310,8 @@ namespace Ps4_Pkg_Sender {
 
         public MainForm() {
             InitializeComponent();
+            Themer.LoadTheme();
+            Themer.ApplyTheme(this);
             listViewColumnSorter = new ListViewColumnSorter();
             listViewItemsQueue.ListViewItemSorter = listViewColumnSorter;
             queueBackgroundWorker = new BackgroundWorker();
@@ -449,8 +452,15 @@ namespace Ps4_Pkg_Sender {
 
         private void ToggleConnected(bool connected) {
             this.connected = connected;
-            labelConnectionDisplay.ForeColor = connected ? Color.Green : Color.Red;
-            labelConnectionDisplay.Text  = connected ? "Connected" : "Not Connected";
+            if (connected) ChangeConnectedLabel(Themer.ThemeSettings.ConnectedLabel, "Connected");
+            else ChangeConnectedLabel(Themer.ThemeSettings.DisconnectedLabel, "Not Connected");
+        }
+
+        private void ChangeConnectedLabel(ThemeItem connectionTheme, string text) {
+            labelConnectionDisplay.ForeColor = connectionTheme.ForeColor;
+            labelConnectionDisplay.BackColor= connectionTheme.BackColor;
+            labelConnectionDisplay.Font = connectionTheme.Values["Font"] as Font;
+            labelConnectionDisplay.Text = text;
         }
 
         private void timer1_Tick(object sender, EventArgs e) {
@@ -629,40 +639,6 @@ namespace Ps4_Pkg_Sender {
             for (int i = 0; i <= lv.Columns.Count - 1; i++) {
                 lv.Columns[i].Width = -2;
             }
-        }
-
-        private void listViewItemsQueue_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e) {
-            Color color = Color.FromArgb(30, 30, 30, 30);
-            Color color1 = Color.FromArgb(30, 30, 30, 30);
-
-            using (System.Drawing.Drawing2D.LinearGradientBrush GradientBrush = new System.Drawing.Drawing2D.LinearGradientBrush(e.Bounds, color, color1, 270)) {
-                e.Graphics.FillRectangle(GradientBrush, e.Bounds);
-            }
-
-            Color linesColor = Color.Gray;
-            using (var brush = new SolidBrush(linesColor)) {
-                using (var pen = new Pen(brush)) {
-                    var offset = -1;
-                    var bounds = e.Bounds;
-                    e.Graphics.DrawLine(pen, bounds.X, bounds.Y + bounds.Height + offset, bounds.X + bounds.Width, bounds.Y + bounds.Height + offset);
-                    e.Graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
-                    e.Graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height);
-                }
-            }
-
-            using (var brush = new SolidBrush(Color.White)) {
-                var rect = new Rectangle(e.Bounds.Location, new Size(e.Bounds.Width, e.Bounds.Height));
-                rect.Offset(2, 5);
-                e.Graphics.DrawString(e.Header.Text, listViewItemsQueue.Font, brush, rect);
-            }
-        }
-
-        private void listViewItemsQueue_DrawItem(object sender, DrawListViewItemEventArgs e) {
-            e.DrawDefault = true;
-        }
-
-        private void listViewItemsQueue_DrawSubItem(object sender, DrawListViewSubItemEventArgs e) {
-            e.DrawDefault = true;
         }
 
         private void MainForm_Resize(object sender, EventArgs e) {
@@ -1066,5 +1042,11 @@ namespace Ps4_Pkg_Sender {
                 MessageBox.Show("The Following Items have been skipped:\n" + string.Join(Environment.NewLine, skippedItems) + "\n\nReason: File not found");
             }
         }
+
+        private void labelSettings_Click(object sender, EventArgs e) {
+            var settings = new SettingsForm(this);
+            settings.ShowDialog(this);
+        }
+      
     }
 }

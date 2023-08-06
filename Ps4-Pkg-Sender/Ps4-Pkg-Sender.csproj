@@ -85,10 +85,51 @@
     <Compile Include="AddServerIpForm.Designer.cs">
       <DependentUpon>AddServerIpForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AppearanceOptionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AppearanceOptionsForm.Designer.cs">
+      <DependentUpon>AppearanceOptionsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CustomListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\FlatNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\CustomProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\Sorting\ListViewColumnSorter.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\BigLabelOption.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\ButtonOption.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\CheckboxOption.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\FontedOption.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\FormOption.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\GroupboxOption.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\LinkLabelOption.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\ListViewOption.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\NumericUpDownOption.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\ProgressbarOption.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\SmallLabelOption.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\TextboxOption.cs" />
+    <Compile Include="Controls\Theming\Options\ControlSamples\ButtonSample.cs" />
+    <Compile Include="Controls\Theming\Options\ControlSamples\CheckboxSample.cs" />
+    <Compile Include="Controls\Theming\Options\ControlSamples\FormSample.cs" />
+    <Compile Include="Controls\Theming\Options\ControlSamples\GroupboxSample.cs" />
+    <Compile Include="Controls\Theming\Options\ControlSamples\LabelSample.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\LabelOption.cs" />
+    <Compile Include="Controls\Theming\Options\ControlSamples\LinkLabelSample.cs" />
+    <Compile Include="Controls\Theming\Options\ControlSamples\ListViewSample.cs" />
+    <Compile Include="Controls\Theming\Options\ControlSamples\NumericUpDownSample.cs" />
+    <Compile Include="Controls\Theming\Options\ControlSamples\ProgressbarSample.cs" />
+    <Compile Include="Controls\Theming\Options\ControlSamples\TextboxSample.cs" />
+    <Compile Include="Controls\Theming\Options\Interfaces\IControlSample.cs" />
+    <Compile Include="Controls\Theming\Options\ConfigOptions\EditableOption.cs" />
+    <Compile Include="Controls\Theming\Options\OptionsSample.cs" />
+    <Compile Include="Controls\Theming\Options\RenderOption.cs" />
+    <Compile Include="Controls\Theming\Options\SelectableOption.cs" />
+    <Compile Include="Controls\Theming\Options\Setting\CurrentSettings.cs" />
     <Compile Include="Enums\PkgType.cs" />
     <Compile Include="Enums\TaskType.cs" />
     <Compile Include="Enums\TransferStatus.cs" />
@@ -98,9 +139,11 @@
     <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="Extensions\IntegerExtenstions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Json\Converters\DictionaryConverter.cs" />
     <Compile Include="Json\Ps4DataPayload.cs" />
     <Compile Include="Json\Ps4Progress.cs" />
     <Compile Include="Json\AppSettings.cs" />
+    <Compile Include="Json\ThemeSettings.cs" />
     <Compile Include="Models\QueueItemInfo.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -118,15 +161,29 @@
     <Compile Include="QueueItem.cs" />
     <Compile Include="Services\FileRenameService.cs" />
     <Compile Include="Services\Service.cs" />
+    <Compile Include="SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ListViewThemeItem.cs" />
+    <Compile Include="UI\ThemeItem.cs" />
+    <Compile Include="UI\Themer.cs" />
+    <Compile Include="UI\ThemeValues.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\HttpUtil.cs" />
     <Compile Include="Utilities\NodeJSUtil.cs" />
     <Compile Include="Utilities\PkgTypeComparator.cs" />
     <Compile Include="Utilities\ProcessUtil.cs" />
+    <Compile Include="Utilities\ReflectionUtil.cs" />
     <Compile Include="Utilities\TimeFormatUtil.cs" />
     <Compile Include="WinApi\Win32Api.cs" />
     <EmbeddedResource Include="AddServerIpForm.resx">
       <DependentUpon>AddServerIpForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AppearanceOptionsForm.resx">
+      <DependentUpon>AppearanceOptionsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -139,7 +196,11 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -169,5 +230,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

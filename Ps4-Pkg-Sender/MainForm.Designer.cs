@@ -1,4 +1,4 @@
-﻿namespace Ps4_Pkg_Sender {
+namespace Ps4_Pkg_Sender {
     partial class MainForm {
         /// <summary>
         /// Required designer variable.
@@ -25,19 +25,14 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.listViewItemsQueue = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.checkBoxSkipInstallCheck = new System.Windows.Forms.CheckBox();
             this.labelProgressNotify = new System.Windows.Forms.Label();
-            this.progressBar1 = new Ps4_Pkg_Sender.Controls.CustomProgressBar();
             this.checkBoxRecursive = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.labelSettings = new System.Windows.Forms.Label();
             this.linkLabelAddServerIp = new System.Windows.Forms.LinkLabel();
             this.labelCheckDelay = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.LinkLabel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.labelConnectionDisplay = new System.Windows.Forms.Label();
             this.labelConnectionStatus = new System.Windows.Forms.Label();
@@ -62,63 +57,17 @@
             this.contextMenuStripNoFocus = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.listViewItemsQueue = new Ps4_Pkg_Sender.Controls.CustomListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.progressBar1 = new Ps4_Pkg_Sender.Controls.CustomProgressBar();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.contextMenuStripFocused.SuspendLayout();
             this.contextMenuStripNoFocus.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // listViewItemsQueue
-            // 
-            this.listViewItemsQueue.AllowDrop = true;
-            this.listViewItemsQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listViewItemsQueue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
-            this.listViewItemsQueue.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4});
-            this.listViewItemsQueue.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.listViewItemsQueue.ForeColor = System.Drawing.Color.White;
-            this.listViewItemsQueue.FullRowSelect = true;
-            this.listViewItemsQueue.HideSelection = false;
-            this.listViewItemsQueue.Location = new System.Drawing.Point(0, 0);
-            this.listViewItemsQueue.Name = "listViewItemsQueue";
-            this.listViewItemsQueue.OwnerDraw = true;
-            this.listViewItemsQueue.Size = new System.Drawing.Size(800, 344);
-            this.listViewItemsQueue.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.listViewItemsQueue.TabIndex = 0;
-            this.listViewItemsQueue.UseCompatibleStateImageBehavior = false;
-            this.listViewItemsQueue.View = System.Windows.Forms.View.Details;
-            this.listViewItemsQueue.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewItemsQueue_ColumnClick);
-            this.listViewItemsQueue.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.listViewItemsQueue_DrawColumnHeader);
-            this.listViewItemsQueue.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.listViewItemsQueue_DrawItem);
-            this.listViewItemsQueue.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.listViewItemsQueue_DrawSubItem);
-            this.listViewItemsQueue.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewItemsQueue_DragDrop);
-            this.listViewItemsQueue.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewItemsQueue_DragEnter);
-            this.listViewItemsQueue.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listViewItemsQueue_MouseUp);
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Title";
-            this.columnHeader1.Width = 266;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "File Name";
-            this.columnHeader2.Width = 179;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Type";
-            this.columnHeader3.Width = 97;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Status";
-            this.columnHeader4.Width = 135;
             // 
             // panel1
             // 
@@ -128,9 +77,9 @@
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Controls.Add(this.buttonProcessQueue);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 350);
+            this.panel1.Location = new System.Drawing.Point(0, 333);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(800, 100);
+            this.panel1.Size = new System.Drawing.Size(800, 117);
             this.panel1.TabIndex = 1;
             // 
             // labelProgressNotify
@@ -138,20 +87,12 @@
             this.labelProgressNotify.AutoSize = true;
             this.labelProgressNotify.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelProgressNotify.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.labelProgressNotify.Location = new System.Drawing.Point(431, 44);
+            this.labelProgressNotify.Location = new System.Drawing.Point(431, 62);
             this.labelProgressNotify.Name = "labelProgressNotify";
-            this.labelProgressNotify.Size = new System.Drawing.Size(0, 16);
+            this.labelProgressNotify.Size = new System.Drawing.Size(71, 16);
             this.labelProgressNotify.TabIndex = 15;
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.progressBar1.ExtraText = null;
-            this.progressBar1.Location = new System.Drawing.Point(431, 67);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.SecondsRemaining = ((long)(0));
-            this.progressBar1.Size = new System.Drawing.Size(357, 23);
-            this.progressBar1.TabIndex = 14;
+            this.labelProgressNotify.Tag = "Big";
+            this.labelProgressNotify.Text = "All Done!";
             // 
             // checkBoxRecursive
             // 
@@ -168,9 +109,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.labelSettings);
             this.groupBox1.Controls.Add(this.linkLabelAddServerIp);
             this.groupBox1.Controls.Add(this.labelCheckDelay);
-            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.panel2);
             this.groupBox1.Controls.Add(this.labelConnectionDisplay);
             this.groupBox1.Controls.Add(this.labelConnectionStatus);
@@ -183,10 +124,21 @@
             this.groupBox1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(425, 100);
+            this.groupBox1.Size = new System.Drawing.Size(425, 117);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server Settings";
+            // 
+            // labelSettings
+            // 
+            this.labelSettings.AutoSize = true;
+            this.labelSettings.Location = new System.Drawing.Point(6, 82);
+            this.labelSettings.Name = "labelSettings";
+            this.labelSettings.Size = new System.Drawing.Size(59, 15);
+            this.labelSettings.TabIndex = 20;
+            this.labelSettings.Tag = "Small";
+            this.labelSettings.Text = "Settings";
+            this.labelSettings.Click += new System.EventHandler(this.labelSettings_Click);
             // 
             // linkLabelAddServerIp
             // 
@@ -211,21 +163,8 @@
             this.labelCheckDelay.Name = "labelCheckDelay";
             this.labelCheckDelay.Size = new System.Drawing.Size(121, 15);
             this.labelCheckDelay.TabIndex = 18;
+            this.labelCheckDelay.Tag = "Small";
             this.labelCheckDelay.Text = "Check Delay:  20s";
-            // 
-            // label3
-            // 
-            this.label3.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(116)))), ((int)(((byte)(12)))));
-            this.label3.AutoSize = true;
-            this.label3.LinkColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(3, 83);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(81, 15);
-            this.label3.TabIndex = 17;
-            this.label3.TabStop = true;
-            this.label3.Text = "By FrostySo";
-            this.label3.VisitedLinkColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.label3_LinkClicked);
             // 
             // panel2
             // 
@@ -244,6 +183,7 @@
             this.labelConnectionDisplay.Name = "labelConnectionDisplay";
             this.labelConnectionDisplay.Size = new System.Drawing.Size(121, 18);
             this.labelConnectionDisplay.TabIndex = 15;
+            this.labelConnectionDisplay.Tag = "cLabel";
             this.labelConnectionDisplay.Text = "Not Connected";
             // 
             // labelConnectionStatus
@@ -255,6 +195,7 @@
             this.labelConnectionStatus.Name = "labelConnectionStatus";
             this.labelConnectionStatus.Size = new System.Drawing.Size(147, 18);
             this.labelConnectionStatus.TabIndex = 14;
+            this.labelConnectionStatus.Tag = "Big";
             this.labelConnectionStatus.Text = "Connection Status";
             // 
             // textBoxPS4IP
@@ -274,6 +215,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(69, 20);
             this.label2.TabIndex = 4;
+            this.label2.Tag = "Big";
             this.label2.Text = "PS4 IP:";
             // 
             // label1
@@ -284,6 +226,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(88, 20);
             this.label1.TabIndex = 3;
+            this.label1.Tag = "Big";
             this.label1.Text = "Server IP:";
             // 
             // comboBoxServerIP
@@ -426,6 +369,71 @@
             this.importToolStripMenuItem.Text = "Import";
             this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
             // 
+            // listViewItemsQueue
+            // 
+            this.listViewItemsQueue.AllowDrop = true;
+            this.listViewItemsQueue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.listViewItemsQueue.ColumnBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.listViewItemsQueue.ColumnFontColor = System.Drawing.Color.White;
+            this.listViewItemsQueue.ColumnLinesColor = System.Drawing.Color.Gray;
+            this.listViewItemsQueue.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4});
+            this.listViewItemsQueue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewItemsQueue.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listViewItemsQueue.ForeColor = System.Drawing.Color.White;
+            this.listViewItemsQueue.FullRowSelect = true;
+            this.listViewItemsQueue.HideSelection = false;
+            this.listViewItemsQueue.Location = new System.Drawing.Point(0, 0);
+            this.listViewItemsQueue.Name = "listViewItemsQueue";
+            this.listViewItemsQueue.OwnerDraw = true;
+            this.listViewItemsQueue.Size = new System.Drawing.Size(800, 333);
+            this.listViewItemsQueue.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.listViewItemsQueue.TabIndex = 0;
+            this.listViewItemsQueue.UseCompatibleStateImageBehavior = false;
+            this.listViewItemsQueue.View = System.Windows.Forms.View.Details;
+            this.listViewItemsQueue.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewItemsQueue_ColumnClick);
+            this.listViewItemsQueue.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewItemsQueue_DragDrop);
+            this.listViewItemsQueue.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewItemsQueue_DragEnter);
+            this.listViewItemsQueue.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listViewItemsQueue_MouseUp);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Title";
+            this.columnHeader1.Width = 266;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "File Name";
+            this.columnHeader2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader2.Width = 179;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Type";
+            this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader3.Width = 97;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Status";
+            this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader4.Width = 135;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.BackColor = System.Drawing.Color.Gray;
+            this.progressBar1.ExtraText = null;
+            this.progressBar1.FontColor = System.Drawing.Color.White;
+            this.progressBar1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(116)))), ((int)(((byte)(12)))));
+            this.progressBar1.Location = new System.Drawing.Point(431, 83);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.SecondsRemaining = ((long)(0));
+            this.progressBar1.Size = new System.Drawing.Size(357, 23);
+            this.progressBar1.TabIndex = 14;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -452,7 +460,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ListView listViewItemsQueue;
+        private Controls.CustomListView listViewItemsQueue;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader4;
@@ -474,7 +482,6 @@
         private System.Windows.Forms.ToolStripMenuItem markForUninstallToolStripMenuItem;
         private Controls.CustomProgressBar progressBar1;
         private System.Windows.Forms.Label labelProgressNotify;
-        private System.Windows.Forms.LinkLabel label3;
         private System.Windows.Forms.ToolStripMenuItem requeueItemToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem themeToolStripMenuItem;
         private System.Windows.Forms.Label labelCheckDelay;
@@ -489,6 +496,7 @@
         private System.Windows.Forms.LinkLabel linkLabelAddServerIp;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
+        private System.Windows.Forms.Label labelSettings;
     }
 }
 

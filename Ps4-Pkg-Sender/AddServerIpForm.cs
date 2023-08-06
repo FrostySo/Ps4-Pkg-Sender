@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ps4_Pkg_Sender.UI;
+using System;
 using System.Windows.Forms;
 
 namespace Ps4_Pkg_Sender {
@@ -20,6 +21,10 @@ namespace Ps4_Pkg_Sender {
             } else {
                 MessageBox.Show(this, "Please enter a valid ip!");
             }
+        }
+
+        private void AddServerIpForm_Load(object sender, EventArgs e) {
+            Themer.ApplyTheme(this);
         }
     }
 }

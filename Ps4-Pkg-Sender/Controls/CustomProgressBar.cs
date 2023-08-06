@@ -11,43 +11,36 @@ using System.Windows.Forms;
 namespace Ps4_Pkg_Sender.Controls {
     public class CustomProgressBar : ProgressBar{
 
-
-        [Category("ProgressBar")]
-        [Description("The color of the progress bar")]
-        public Color Color {
-            get { return progressColor; }
-            set {
-                progressColor = value;
-                if(_brush != null) {
-                    _brush.Dispose();
-                }
-                _brush = new SolidBrush(progressColor);
-                Invalidate();
-            }
-        }
-
         [Description("The Font of the text")]
         public Font Font {
             get { return font; }
             set {
-                if(font != null) {
-                    font.Dispose();
-                }
                 font = value;
                 Invalidate();
             }
         }
 
-        private Color progressColor = Color.Green;
+        [Category("ProgressBar")]
+        [Description("The Font Color of the progress bar text")]
+        public Color FontColor {
+            get { return _fontColor; }
+            set {
+                _fontColor = value;
+                Invalidate();
+            }
+        }
+
+        private Color _fontColor  = Color.White;
 
         private Font font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        private Brush _brush = Brushes.Green;
 
         public long SecondsRemaining { get; set; } = 0;
 
         public string ExtraText { get; set; } = null;
 
         public CustomProgressBar() {
+            this.BackColor = Color.Gray;
+            this.ForeColor = Color.FromArgb(223, 116, 12);
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
         }
@@ -64,8 +57,15 @@ namespace Ps4_Pkg_Sender.Controls {
             if (ProgressBarRenderer.IsSupported)
                 ProgressBarRenderer.DrawHorizontalBar(e.Graphics, e.ClipRectangle);
             Rectangle rect = new Rectangle(new Point(0, 0), new Size(Maximum, rec.Height));
-            e.Graphics.FillRectangle(Brushes.Gray, 0, 0, Width, rect.Height);
-            e.Graphics.FillRectangle(_brush, 0, 0, rec.Width, rec.Height);
+
+            using (var backColorBrush = new SolidBrush(BackColor)) {
+                e.Graphics.FillRectangle(backColorBrush, 0, 0, Width, rect.Height);
+            }
+
+            using (var foreColoreBrush = new SolidBrush(ForeColor)) {
+                e.Graphics.FillRectangle(foreColoreBrush, 0, 0, rec.Width, rec.Height);
+            }
+
             StringFormat sf = new StringFormat();
             sf.LineAlignment = StringAlignment.Center;
             sf.Alignment = StringAlignment.Center;
@@ -73,7 +73,10 @@ namespace Ps4_Pkg_Sender.Controls {
             if (ExtraText != null) {
                 estimatedTime += ExtraText;
             }
-            e.Graphics.DrawString($"{this.Value}% {estimatedTime}", this.font, Brushes.White,this.Width / 2, this.Height / 2,sf);
+
+            using (var fontColorBrush = new SolidBrush(_fontColor)) {
+                e.Graphics.DrawString($"{this.Value}% {estimatedTime}", this.font, fontColorBrush, this.Width / 2, this.Height / 2, sf);
+            }
         }
     }
 }
