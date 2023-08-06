@@ -308,8 +308,15 @@ namespace Ps4_Pkg_Sender {
             return server;
         }
 
+        private string GetFileVersion() {
+            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
+            return fileVersionInfo.FileVersion.Substring(0,fileVersionInfo.FileVersion.LastIndexOf('.'));
+        }
+
         public MainForm() {
             InitializeComponent();
+            this.Text = $"Ps4 Pkg Sender v{GetFileVersion()}";
             Themer.LoadTheme();
             Themer.ApplyTheme(this);
             listViewColumnSorter = new ListViewColumnSorter();
@@ -331,6 +338,7 @@ namespace Ps4_Pkg_Sender {
             settings.ProgressCheckDelay = Settings.ProgressCheckDelay;
             settings.SkipInstallCheck = checkBoxSkipInstallCheck.Checked;
             File.WriteAllText("settings.json", JsonConvert.SerializeObject(settings, Formatting.Indented));
+            labelCheckDelay.Text = $"Check Delay:  {settings.ProgressCheckDelay}s";
         }
 
         private void LoadSettings() {
@@ -614,7 +622,9 @@ namespace Ps4_Pkg_Sender {
                 AddAllValidItems(filePaths);
 
                 var jsonFiles = GetFilesForFileExtension(".json", filePaths, true);
-                foreach(var jsonFile in jsonFiles) {
+
+                foreach (var jsonFile in jsonFiles) {
+
                     var queueItemList = ReadQueueItemJsonFile(jsonFile);
                     if (queueItemList == null) continue;
                     ImportQueueItems(queueItemList);
