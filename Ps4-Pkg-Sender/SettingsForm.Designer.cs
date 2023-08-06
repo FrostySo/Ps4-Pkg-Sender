@@ -94,13 +94,16 @@
             this.button1.Text = "FrostySo";
             this.button1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.MouseEnter += new System.EventHandler(this.button1_MouseEnter);
+            this.button1.MouseLeave += new System.EventHandler(this.button1_MouseLeave);
             // 
             // linkLabelThemeOptions
             // 
             this.linkLabelThemeOptions.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(116)))), ((int)(((byte)(12)))));
             this.linkLabelThemeOptions.AutoSize = true;
             this.linkLabelThemeOptions.LinkColor = System.Drawing.Color.White;
-            this.linkLabelThemeOptions.Location = new System.Drawing.Point(55, 163);
+            this.linkLabelThemeOptions.Location = new System.Drawing.Point(55, 159);
             this.linkLabelThemeOptions.Name = "linkLabelThemeOptions";
             this.linkLabelThemeOptions.Size = new System.Drawing.Size(113, 13);
             this.linkLabelThemeOptions.TabIndex = 20;

@@ -1,5 +1,6 @@
-using Ps4_Pkg_Sender.UI;
+﻿using Ps4_Pkg_Sender.UI;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -35,6 +36,18 @@ namespace Ps4_Pkg_Sender {
             MainForm.Settings.SoundSettings.PlaySoundOnError = checkBoxPlayOnError.Checked;
             MainForm.Settings.SoundSettings.PlayQueueFinishSound = checkBoxFinishedQueueSound.Checked;
             _mainForm.SaveSettings();
+        }
+
+        private void button1_MouseEnter(object sender, EventArgs e) {
+            button1.Cursor = Cursors.Hand;
+        }
+
+        private void button1_MouseLeave(object sender, EventArgs e) {
+            button1.Cursor = Cursors.Default;
+        }
+
+        private void button1_Click(object sender, EventArgs e) {
+            Process.Start("https://github.com/FrostySo/Ps4-Pkg-Sender");
         }
     }
 }
