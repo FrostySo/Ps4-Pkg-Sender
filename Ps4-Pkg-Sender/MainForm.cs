@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ps4_Pkg_Sender.Controls.Sorting;
 using Ps4_Pkg_Sender.Exceptions;
@@ -87,6 +87,7 @@ namespace Ps4_Pkg_Sender {
             settings.SoundSettings = Settings.SoundSettings;
             File.WriteAllText("settings.json", JsonConvert.SerializeObject(settings, Formatting.Indented));
             labelCheckDelay.Text = $"Check Delay:  {settings.ProgressCheckDelay}s";
+            Settings = settings;
         }
 
         private void LoadSettings() {
@@ -198,6 +199,7 @@ namespace Ps4_Pkg_Sender {
                     MessageBox.Show("Please check your PS4's IP or ensure your firewall is not blocking the connection.","Could Not Establish Connection");
                     return;
                 }
+                SaveSettings();
                 processing = true;
                 buttonProcessQueue.Text = "Stop Queue";
                 queueBackgroundWorker.RunWorkerAsync(GetServerDetails());
