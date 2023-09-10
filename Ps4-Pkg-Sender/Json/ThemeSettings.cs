@@ -84,5 +84,15 @@ namespace Ps4_Pkg_Sender.Json {
               new KeyValuePair<string, object>("ButtonHighlightColor", Color.FromArgb(122,122,122)),
               new KeyValuePair<string, object>("Font", new Font("Microsoft Sans Serif", 8.25f, FontStyle.Regular))
         );
+
+        public ThemeItem ContextMenu { get; set; } = new ThemeItem("ContextMenu",
+              new KeyValuePair<string, object>("BackColor", Color.FromArgb(27,27,28)),
+              new KeyValuePair<string, object>("ForeColor", Color.FromArgb(241,241,241)),
+              new KeyValuePair<string, object>("FocusColor", Color.FromArgb(51, 51, 52)),
+              new KeyValuePair<string, object>("BorderColor", Color.FromArgb(51, 51, 52)),
+              new KeyValuePair<string, object>("LeftSideBackColor", Color.FromArgb(27,27,28)),
+              new KeyValuePair<string, object>("ArrowColor", Color.White),
+              new KeyValuePair<string, object>("ArrowFocusColor", SystemColors.MenuHighlight)
+        );
     }
 }

@@ -43,7 +43,7 @@
             this.comboBoxServerIP = new System.Windows.Forms.ComboBox();
             this.buttonProcessQueue = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.contextMenuStripFocused = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStripFocused = new Controls.CustomContextMenu(this.components);
             this.requeueItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.markAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.themeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,7 +55,7 @@
             this.clearAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTipInfo = new System.Windows.Forms.ToolTip(this.components);
-            this.contextMenuStripNoFocus = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStripNoFocus = new Controls.CustomContextMenu(this.components);
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listViewItemsQueue = new Ps4_Pkg_Sender.Controls.CustomListView();
@@ -491,7 +491,7 @@
         private System.Windows.Forms.Button buttonProcessQueue;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStripFocused;
+        private Controls.CustomContextMenu contextMenuStripFocused;
         private System.Windows.Forms.CheckBox checkBoxRecursive;
         private System.Windows.Forms.Label labelConnectionDisplay;
         private System.Windows.Forms.Label labelConnectionStatus;
@@ -504,7 +504,7 @@
         private System.Windows.Forms.ToolStripMenuItem themeToolStripMenuItem;
         private System.Windows.Forms.Label labelCheckDelay;
         private System.Windows.Forms.ToolTip toolTipInfo;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStripNoFocus;
+        private Controls.CustomContextMenu contextMenuStripNoFocus;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem markAsToolStripMenuItem;

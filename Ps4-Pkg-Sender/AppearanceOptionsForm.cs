@@ -30,6 +30,7 @@ namespace Ps4_Pkg_Sender {
             new TextboxOption(),
             new GroupboxOption(),
             new FormOption(),
+            new ContextMenuOption()
         };
 
         private void LoadCurrentSettings() {
@@ -153,7 +154,12 @@ namespace Ps4_Pkg_Sender {
             panelSamplePanel.Controls.Clear();
             var control = _selectedOption.ControlSample.GetSampleControl();
             panelSamplePanel.Controls.Add(control);
+           
             CenterControl(control);
+            if (control is Controls.CustomContextMenu contextMenuSample) {
+                contextMenuSample.BringToFront();
+                contextMenuSample.Show(control.Location);
+            }
             SelectFont(_selectedOption.FontOption?.Value as Font);
             if (_selectedOption.AllSelectableOptions.Count > 0) {
                 comboBoxPropertySelection.Items.Clear();

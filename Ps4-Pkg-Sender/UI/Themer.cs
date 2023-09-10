@@ -48,6 +48,7 @@ namespace Ps4_Pkg_Sender.UI {
             ApplyThemeTo<GroupBox>(form, themeSettings.Groupboxes);
             ApplyThemeTo<FlatNumericUpDown>(form, themeSettings.NumericUpDowns);
             ApplyThemeTo<Form>(form, themeSettings.Forms);
+            ApplyThemeTo<CustomContextMenu>(form, themeSettings.ContextMenu);
             ApplyThemeTo<CustomListView>(form, themeSettings.ListViews);
             form.ResumeLayout();
         }
@@ -89,6 +90,10 @@ namespace Ps4_Pkg_Sender.UI {
                 if (control.Tag != null && control.Tag.ToString().Equals("ignore",StringComparison.OrdinalIgnoreCase)) continue;
                 foreach (var kvp in themeItem.Values) {
                     Utilities.ReflectionUtil.ChangeVaue(control, kvp.Key, kvp.Value);
+                }
+
+                if(control is CustomContextMenu customContextMenu) {
+                    customContextMenu.ApplyMenuStripTheme();
                 }
             }
         }
