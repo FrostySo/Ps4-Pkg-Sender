@@ -43,7 +43,8 @@ namespace Ps4_Pkg_Sender {
         }
 
         public void UpdateType(Enums.PkgType pkgType,ListView listView) {
-            listView.InvokeIfRequired(() => ListViewItem.SubItems[2].Text = pkgType.ToString());
+
+            listView.InvokeIfRequired(() => ListViewItem.SubItems[2].Text = pkgType.ToDisplayText());
             Info.PkgInfo.Type = pkgType;
         }
 

@@ -10,7 +10,7 @@ namespace Ps4_Pkg_Sender.Enums {
         Addon_Theme,
     }
 
-    public class Parser { //Just C# things
+    public static class Parser { //Just C# things
       
         public static PkgType Parse(string name) {
             switch (name) {
@@ -23,6 +23,20 @@ namespace Ps4_Pkg_Sender.Enums {
                 default:
                 return PkgType.Unknown;
             }
+        }
+
+        public static string ToDisplayText(this PkgType pkgType) {
+            var pkgTypeDisplayText = pkgType.ToString();
+            switch (pkgType) {
+                case PkgType.Additional_Content:
+                    pkgTypeDisplayText = "Addon";
+                    break;
+
+                case PkgType.Addon_Theme:
+                    pkgTypeDisplayText = "Addon Theme";
+                    break;
+            }
+            return pkgTypeDisplayText;
         }
 
         public static PkgType Parse(PKG.SceneRelated.PKGType pKG_Type) {

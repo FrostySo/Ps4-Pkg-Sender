@@ -1,6 +1,7 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ps4_Pkg_Sender.Controls.Sorting;
+using Ps4_Pkg_Sender.Enums;
 using Ps4_Pkg_Sender.Exceptions;
 using Ps4_Pkg_Sender.Extensions;
 using Ps4_Pkg_Sender.Models;
@@ -415,7 +416,7 @@ namespace Ps4_Pkg_Sender {
             ListViewItem listViewItem = new ListViewItem(pkgInfo.Title);
             listViewItem.Tag = pkgInfo.GetHashCode();
             listViewItem.SubItems.Add(Path.GetFileName(pkgInfo.FilePath));
-            listViewItem.SubItems.Add(pkgInfo.Type.ToString());
+            listViewItem.SubItems.Add(pkgInfo.Type.ToDisplayText());
             listViewItem.SubItems.Add(Enums.TaskType.Queued.ToString());
             this.listViewItemsQueue.InvokeIfRequired(() => listViewItemsQueue.Items.Add(listViewItem));
             QueueItem queueItem = new QueueItem(listViewItem, listViewItemsQueue, pkgInfo);
@@ -428,7 +429,7 @@ namespace Ps4_Pkg_Sender {
             ListViewItem listViewItem = new ListViewItem(pkgInfo.Title);
             listViewItem.Tag = pkgInfo.GetHashCode();
             listViewItem.SubItems.Add(Path.GetFileName(pkgInfo.FilePath));
-            listViewItem.SubItems.Add(pkgInfo.Type.ToString());
+            listViewItem.SubItems.Add(pkgInfo.Type.ToDisplayText());
             var queueInfoText = queueItemInfo.Uninstall ? $"Marked for uninstall" : Enums.TaskType.Queued.ToString();
             listViewItem.SubItems.Add(queueInfoText);
             this.listViewItemsQueue.InvokeIfRequired(() => listViewItemsQueue.Items.Add(listViewItem));
